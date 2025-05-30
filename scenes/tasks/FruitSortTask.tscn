@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctl8gc5nw2x00"]
+
+[ext_resource type="Script" uid="uid://bflouc1ll0jtb" path="res://scripts/tasks/fruit_sort_task.gd" id="1_gmfyx"]
+
+[node name="FruitSortTask" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_gmfyx")
+
+[node name="InstructionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 53.0
+offset_top = 70.0
+offset_right = 1103.0
+offset_bottom = 589.0
+columns = 2
+
+[node name="Fruit1" type="Button" parent="Grid"]
+layout_mode = 2
+
+[node name="Fruit2" type="Button" parent="Grid"]
+layout_mode = 2
+
+[node name="Fruit3" type="Button" parent="Grid"]
+layout_mode = 2
+
+[node name="Fruit4" type="Button" parent="Grid"]
+layout_mode = 2
+
+[node name="Fruit5" type="Button" parent="Grid"]
+layout_mode = 2
+
+[node name="Fruit6" type="Button" parent="Grid"]
+layout_mode = 2
