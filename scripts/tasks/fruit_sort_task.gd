@@ -65,7 +65,7 @@ func initialize_grid_with_fruits():
 		fruit["is_picked"] = false
 		initial_fruits_temp.append(fruit)
 	
-	# If for some reason we still don't have 6 fruits (e.g., very limited fruit list),
+	# If for some reason we still don't have 6 fruits (e.g.`, very limited fruit list),
 	# fill with duplicates or placeholders. (Shouldn't be an issue with current `all_fruits`)
 	while initial_fruits_temp.size() < 6:
 		initial_fruits_temp.append({ "name": "Placeholder", "quality": "bad", "is_picked": false })
@@ -177,28 +177,27 @@ func handle_pick(fruit: Dictionary, btn: Button, index_in_grid: int):
 	btn.disabled = true # Disable the button immediately after it's picked
 
 	if fruit["quality"] == "good":
-		# Mark this fruit as picked in our internal grid array
 		current_grid_fruits[index_in_grid]["is_picked"] = true
-		
 		picked_good_fruits_count += 1
 		print("✅ Correct fruit picked: %s. Total good fruits: %d" % [fruit["name"], picked_good_fruits_count])
-		
+
 		emit_signal("task_completed", 100, true) # Emit points for each correct pick
 
 		if picked_good_fruits_count >= 3:
 			task_finished = true
 			instruction.text = "Great job! Fruit sorting task complete!"
-			await get_tree().create_timer(0.5).timeout
-			# Disable all buttons on the grid once the task is complete
+
+			# ✅ No timer anymore, disable buttons immediately
 			for b in grid.get_children():
 				b.disabled = true
-			emit_signal("task_completed", 0, true) # Final signal for task completion
+			#emit_signal("task_completed", 0, true) # Final signal for task completion
 		else:
-			# If good fruit picked, just update the button state. NO reshuffle of others.
-			update_buttons_display() # Re-render to ensure disabled state is applied
+			update_buttons_display() # Re-render
 	else:
 		print("❌ Incorrect fruit picked: %s" % fruit["name"])
 		emit_signal("task_completed", 0, false)
-		await get_tree().create_timer(0.3).timeout
-		# Regenerate the selectable fruits when a bad one is picked
-		reshuffle_unpicked_fruits()
+		
+		# Only reshuffle if task not yet finished
+		if not task_finished:
+			await get_tree().create_timer(0.3).timeout
+			reshuffle_unpicked_fruits()

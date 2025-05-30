@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://c16io24hf4nj"]
+
+[ext_resource type="Script" uid="uid://4vlaa50xn76x" path="res://scripts/tasks/MatchLettersTask.gd" id="1_7ny55"]
+
+[node name="MatchLettersTask" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_7ny55")
+
+[node name="InstructionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="GridLetters" type="GridContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 5
+
+[node name="Letter1" type="Button" parent="VBoxContainer/GridLetters"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Letter2" type="Button" parent="VBoxContainer/GridLetters"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Letter3" type="Button" parent="VBoxContainer/GridLetters"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Letter4" type="Button" parent="VBoxContainer/GridLetters"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Letter5" type="Button" parent="VBoxContainer/GridLetters"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="GridPictures" type="GridContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 5
+
+[node name="Picture1" type="Button" parent="VBoxContainer/GridPictures"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Picture2" type="Button" parent="VBoxContainer/GridPictures"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Picture3" type="Button" parent="VBoxContainer/GridPictures"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Picture4" type="Button" parent="VBoxContainer/GridPictures"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+
+[node name="Picture5" type="Button" parent="VBoxContainer/GridPictures"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2

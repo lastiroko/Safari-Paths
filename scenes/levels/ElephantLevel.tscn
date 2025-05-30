@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://30seyeut4p3"]
+
+[ext_resource type="Texture2D" uid="uid://doac2rnmdtoeb" path="res://assets/backgrounds/bg-1.png" id="2_w35t7"]
+[ext_resource type="Texture2D" uid="uid://dodlcklaokdv7" path="res://assets/characters/elephant/elephant_neutral.png" id="3_wfobt"]
+[ext_resource type="Texture2D" uid="uid://du43nx55icpsb" path="res://assets/items/coins.png" id="4_y8btv"]
+[ext_resource type="Script" uid="uid://cyh4soxwk76yu" path="res://scripts/levels/elephant-level.gd" id="5_w35t7"]
+
+[node name="ElephantLevel" type="Node2D"]
+script = ExtResource("5_w35t7")
+
+[node name="backgound" type="Sprite2D" parent="."]
+position = Vector2(572, 354)
+scale = Vector2(1.12109, 0.84375)
+texture = ExtResource("2_w35t7")
+
+[node name="Elephant" type="Sprite2D" parent="."]
+position = Vector2(121, 484)
+scale = Vector2(0.258911, 0.258911)
+texture = ExtResource("3_wfobt")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="HUDContainer" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="HUD/HUDContainer"]
+layout_mode = 0
+offset_left = 922.0
+offset_top = 11.0
+offset_right = 971.0
+offset_bottom = 80.0
+texture = ExtResource("4_y8btv")
+expand_mode = 1
+
+[node name="PointsLabel" type="Label" parent="HUD/HUDContainer"]
+layout_mode = 0
+offset_left = 974.0
+offset_top = 23.0
+offset_right = 1106.0
+offset_bottom = 68.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "Points: 0"
+
+[node name="Taskarea" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 251.0
+offset_top = 131.0
+offset_right = 1145.0
+offset_bottom = 649.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

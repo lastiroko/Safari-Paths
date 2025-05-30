@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://btvm7tatbqe07"]
+[gd_scene load_steps=2 format=3 uid="uid://uf7xy85tm2hb"]
 
-[ext_resource type="Script" uid="uid://b1efb0mg4a6d2" path="res://scripts/tasks/addition_task.gd" id="1_unrrd"]
+[ext_resource type="Script" uid="uid://3artug0el40d" path="res://scripts/tasks/subtraction-task.gd" id="1_p37xj"]
 
-[node name="AdditionTask" type="Control"]
+[node name="SubtractionTask" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_unrrd")
+script = ExtResource("1_p37xj")
 
 [node name="DebugBG" type="ColorRect" parent="."]
 layout_mode = 0

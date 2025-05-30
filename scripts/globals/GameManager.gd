@@ -10,8 +10,8 @@ var task_points: Dictionary = {
 	"monkey_fruits": 0,
 	"elephant_task1": 0,
 	"elephant_task2": 0,
-	"lion_task1": 0,
-	"lion_task2": 0
+	#"lion_task1": 0, will work on these if we have more time
+	#"lion_task2": 0
 }
 
 func award_points(amount: int, task_key: String = "") -> void:
