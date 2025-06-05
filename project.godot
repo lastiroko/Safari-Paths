@@ -19,6 +19,13 @@ config/icon="res://icon.svg"
 
 GameManager="*res://scripts/globals/GameManager.gd"
 
+[display]
+
+window/size/viewport_width=1200
+window/size/viewport_height=650
+window/size/initial_position=Vector2i(1200, 750)
+window/size/resizable=false
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

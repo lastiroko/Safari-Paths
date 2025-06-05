@@ -148,7 +148,10 @@ func reshuffle_unpicked_fruits():
 func update_buttons_display():
 	# Iterate through all 6 buttons in the grid
 	for i in range(grid.get_child_count()):
-		var btn := grid.get_child(i) as Button
+		var btn := grid.get_child(i) as TextureButton
+		btn.custom_minimum_size = Vector2(128, 128)  # or 256
+
+
 		
 		# Disconnect any existing signals to prevent multiple connections
 		for c in btn.get_signal_connection_list("pressed"):
@@ -156,7 +159,13 @@ func update_buttons_display():
 
 		if i < current_grid_fruits.size():
 			var fruit = current_grid_fruits[i]
-			btn.text = fruit["name"]
+			btn.tooltip_text = fruit["name"]  # ✅ shows fruit name on hover
+
+			
+			# Load the texture
+			var tex_path = "res://assets/fruits/%s.png" % fruit["name"]
+			var texture = load(tex_path) if ResourceLoader.exists(tex_path) else null
+			btn.texture_normal = texture
 			
 			if fruit.get("is_picked", false):
 				btn.disabled = true # Already picked good fruit
@@ -164,13 +173,14 @@ func update_buttons_display():
 				btn.disabled = false # Selectable fruit
 				# Pass the index to handle_pick so we can update the correct fruit in current_grid_fruits
 				btn.pressed.connect(func():
-					handle_pick(fruit, btn, i) 
+					handle_pick(fruit,btn, i) 
 				)
 		else:
-			btn.text = ""
+			btn.texture_normal = null
+			btn.tooltip_text = ""
 			btn.disabled = true
 
-func handle_pick(fruit: Dictionary, btn: Button, index_in_grid: int):
+func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 	if task_finished:
 		return
 
