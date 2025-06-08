@@ -66,7 +66,8 @@ func _on_task_completed(points_awarded: int, was_correct: bool):
 		if GameManager.task_points[task_key] >= 300:
 			print("✅ Finished Fruit Sort Task (Points: %d). Moving to Elephant Level." % GameManager.task_points[task_key])
 			# Change to the next level scene (Elephant Level)
-			get_tree().change_scene_to_file("res://scenes/levels/ElephantLevel.tscn")
+			get_tree().change_scene_to_file("res://scenes/levels/Level_transition.tscn")
+
 	
 	# The individual task scenes (AdditionTask, FruitSortTask) are responsible for
 	# regenerating questions/fruits if the task is not yet complete and an action occurs.
