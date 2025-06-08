@@ -6,15 +6,16 @@
 [ext_resource type="Texture2D" uid="uid://du43nx55icpsb" path="res://assets/items/coins.png" id="3_giw2d"]
 
 [node name="MonkeyLevel" type="Node2D"]
+scale = Vector2(1.05291, 0.99421)
 script = ExtResource("1_b4ccf")
 
 [node name="backgound" type="Sprite2D" parent="."]
 position = Vector2(572, 354)
-scale = Vector2(1.12109, 0.84375)
+scale = Vector2(1.113, 0.881138)
 texture = ExtResource("1_wo35c")
 
 [node name="Monkey" type="Sprite2D" parent="."]
-position = Vector2(121, 466)
+position = Vector2(105, 470)
 scale = Vector2(0.258911, 0.258911)
 texture = ExtResource("2_b4ccf")
 
@@ -48,9 +49,10 @@ text = "Points: 0"
 [node name="Taskarea" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 251.0
-offset_top = 131.0
-offset_right = 1145.0
-offset_bottom = 649.0
+offset_left = 235.0
+offset_top = 156.0
+offset_right = 1129.0
+offset_bottom = 674.0
+scale = Vector2(1.00468, 0.902588)
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
