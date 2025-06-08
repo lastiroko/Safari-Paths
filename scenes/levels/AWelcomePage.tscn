@@ -65,4 +65,6 @@ grow_horizontal = 2
 grow_vertical = 0
 text = "Let's Play"
 
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]
+
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
