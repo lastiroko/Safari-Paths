@@ -47,6 +47,7 @@ texture_normal = ExtResource("3_ftnph")
 script = ExtResource("1_171vi")
 
 [node name="WelldoneLabel" type="Label" parent="."]
+layout_mode = 0
 offset_left = -228.82
 offset_top = -334.14
 offset_right = 456.18
