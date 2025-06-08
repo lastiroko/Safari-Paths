@@ -15,6 +15,8 @@ var task_paths = [
 ]
 
 func _ready():
+	audio_player.stream = preload("res://assets/audio/Kalahari Dreaming.mp3")
+	audio_player.play()
 	load_task(current_task_index)
 	monkey.texture = load("res://assets/characters/monkey/monkey_neutral.png")
 	print("Loading task") # This print statement indicates the start of the MonkeyLevel
@@ -29,6 +31,8 @@ func load_task(index: int):
 	# Connect the "task_completed" signal from the new task scene to this script's handler
 	task_scene.connect("task_completed", Callable(self, "_on_task_completed"))
 	task_area.add_child(task_scene) # Add the new task scene to the scene tree
+
+
 
 func _on_task_completed(points_awarded: int, was_correct: bool):
 	var task_key: String
@@ -45,28 +49,26 @@ func _on_task_completed(points_awarded: int, was_correct: bool):
 	# Update the HUD to reflect the current total player points
 	hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
 
-	# Update the monkey's texture based on whether the last action was correct or incorrect
+	# Update the monkey's texture and play feedback audio
 	if was_correct:
 		monkey.texture = load("res://assets/characters/monkey/monkey_neutral.png")
+		$CorrectAudioPlayer.play()
 	else:
 		monkey.texture = load("res://assets/characters/monkey/monkey_sad.png")
+		$IncorrectAudioPlayer.play()
 
 	# --- Task Completion Checks ---
-	# This logic now runs AFTER points have been potentially awarded,
-	# ensuring GameManager.task_points is up-to-date.
-
 	if task_key == "monkey_addition":
-		# Check if the total points for the addition task have reached 300
 		if GameManager.task_points[task_key] >= 300:
 			print("✅ Finished Addition Task (Points: %d). Moving to Fruit Sort." % GameManager.task_points[task_key])
-			current_task_index += 1 # Increment to the next task
-			load_task(current_task_index) # Load the next task (Fruit Sort)
+			current_task_index += 1
+			load_task(current_task_index)
 	elif task_key == "monkey_fruits":
-		# Check if the total points for the fruit sort task have reached 300
 		if GameManager.task_points[task_key] >= 300:
 			print("✅ Finished Fruit Sort Task (Points: %d). Moving to Elephant Level." % GameManager.task_points[task_key])
-			# Change to the next level scene (Elephant Level)
 			get_tree().change_scene_to_file("res://scenes/levels/ElephantLevel.tscn")
+
+	
 	
 	# The individual task scenes (AdditionTask, FruitSortTask) are responsible for
 	# regenerating questions/fruits if the task is not yet complete and an action occurs.

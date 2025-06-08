@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cuj61dm62qer1"
+path="res://.godot/imported/Girl Saying Excellent.mp3-6ed673e09a3dd2dac0f5ea8da6bc6e37.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/Girl Saying Excellent.mp3"
+dest_files=["res://.godot/imported/Girl Saying Excellent.mp3-6ed673e09a3dd2dac0f5ea8da6bc6e37.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

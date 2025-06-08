@@ -30,7 +30,7 @@ var task_finished := false
 
 func _ready():
 	randomize()
-	instruction.text = "🍎 Pick the ripe fruits!"
+	instruction.text = "🍎 Pick the healthy fruits!"
 	initialize_grid_with_fruits() # Initial call to populate the grid
 
 func initialize_grid_with_fruits():
