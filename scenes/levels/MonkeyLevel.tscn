@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://cnmfthuoshpoh"]
+[gd_scene load_steps=8 format=3 uid="uid://cnmfthuoshpoh"]
 
 [ext_resource type="Script" uid="uid://5wxl78e7t1ku" path="res://scripts/levels/monkey-level.gd" id="1_b4ccf"]
 [ext_resource type="Texture2D" uid="uid://doac2rnmdtoeb" path="res://assets/backgrounds/bg-1.png" id="1_wo35c"]
 [ext_resource type="Texture2D" uid="uid://du8whrbfs4u0e" path="res://assets/characters/monkey/monkey_neutral.png" id="2_b4ccf"]
 [ext_resource type="Texture2D" uid="uid://du43nx55icpsb" path="res://assets/items/coins.png" id="3_giw2d"]
+[ext_resource type="AudioStream" uid="uid://bn8pf6ujrjqgm" path="res://assets/audio/Kalahari Dreaming.mp3" id="5_giw2d"]
+[ext_resource type="AudioStream" uid="uid://cuj61dm62qer1" path="res://assets/audio/Girl Saying Excellent.mp3" id="6_2cfc8"]
+[ext_resource type="AudioStream" uid="uid://bh4nf0bxehf05" path="res://assets/audio/Girl Saying Let's Do It Again.mp3" id="7_5lpup"]
 
 [node name="MonkeyLevel" type="Node2D"]
 scale = Vector2(1.05291, 0.99421)
@@ -55,4 +58,11 @@ offset_right = 1129.0
 offset_bottom = 674.0
 scale = Vector2(1.00468, 0.902588)
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_giw2d")
+
+[node name="CorrectAudioPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_2cfc8")
+
+[node name="IncorrectAudioPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_5lpup")

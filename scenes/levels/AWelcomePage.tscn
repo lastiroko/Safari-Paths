@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://doyhvi6d3wyl2"]
+[gd_scene load_steps=4 format=3 uid="uid://bxdeutjbnvry4"]
 
-[ext_resource type="Script" uid="uid://ca5p4ykifi3e4" path="res://welcome_page.gd" id="1_opqqr"]
+[ext_resource type="Script" path="res://welcome_page.gd" id="1_opqqr"]
 [ext_resource type="Texture2D" uid="uid://c5n8t0mgk5rs6" path="res://assets/backgrounds/bg-r.png" id="2_v027o"]
 
 [sub_resource type="FontFile" id="FontFile_8vjsq"]
@@ -64,5 +64,7 @@ offset_bottom = 530.0
 grow_horizontal = 2
 grow_vertical = 0
 text = "Let's Play"
+
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]
 
 [connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]
