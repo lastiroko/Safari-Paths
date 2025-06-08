@@ -99,7 +99,9 @@ func handle_answer(selected: int):
 				btn.disabled = true # Disable all buttons
 			question_label.text = "🎉 Great job! Subtraction task complete!"
 			# Emit 0 points as the task is fully completed
-			emit_signal("task_completed", 0, true) 
+			emit_signal("task_completed", 0, true)
+			get_tree().change_scene_to_file("res://scenes/levels/end_scene.tscn")
+ 
 		else:
 			generate_question() # Generate a new question if task not finished
 	else:
