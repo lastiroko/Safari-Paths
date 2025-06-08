@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=3 uid="uid://ft8lj03ox7np"]
+
+[ext_resource type="Script" uid="uid://yn27sc6bcyai" path="res://scripts/levels/level_transition.gd" id="1_171vi"]
+[ext_resource type="Texture2D" uid="uid://dmpt4e12m8kkb" path="res://assets/backgrounds/monkeyDone.png" id="2_hu0dm"]
+[ext_resource type="Texture2D" uid="uid://dh1j76ggt7ipn" path="res://assets/items/yellowContinuebutton.png" id="3_ftnph"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_171vi"]
+font_size = 58
+outline_size = 20
+outline_color = Color(0.372359, 0.372343, 0, 1)
+
+[node name="LevelTransition" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 515.0
+offset_top = 349.0
+offset_right = 515.0
+offset_bottom = 349.0
+scale = Vector2(0.992046, 1.03549)
+script = ExtResource("1_171vi")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -511.065
+offset_top = -542.736
+offset_right = 512.935
+offset_bottom = 481.264
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.17787, 0.821608)
+texture = ExtResource("2_hu0dm")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="ContinueButton" type="TextureButton" parent="."]
+custom_minimum_size = Vector2(100, 20)
+layout_mode = 0
+offset_left = -78.6253
+offset_top = 84.0179
+offset_right = 945.375
+offset_bottom = 1108.02
+scale = Vector2(0.334051, 0.253265)
+texture_normal = ExtResource("3_ftnph")
+script = ExtResource("1_171vi")
+
+[node name="WelldoneLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = -228.82
+offset_top = -334.14
+offset_right = 456.18
+offset_bottom = -255.14
+text = "Monkey Level Complete!"
+label_settings = SubResource("LabelSettings_171vi")
+
+[connection signal="mouse_entered" from="ContinueButton" to="." method="_on_continue_button_mouse_entered"]
+[connection signal="mouse_exited" from="ContinueButton" to="." method="_on_continue_button_mouse_exited"]
+[connection signal="ready" from="ContinueButton" to="." method="_on_continue_button_ready"]

@@ -13,7 +13,7 @@ script = ExtResource("5_w35t7")
 
 [node name="backgound" type="Sprite2D" parent="."]
 position = Vector2(572, 354)
-scale = Vector2(1.12109, 0.84375)
+scale = Vector2(1.22386, 0.890451)
 texture = ExtResource("2_w35t7")
 
 [node name="Elephant" type="Sprite2D" parent="."]
