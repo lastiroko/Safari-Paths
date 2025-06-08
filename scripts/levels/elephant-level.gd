@@ -4,6 +4,8 @@ extends Node
 @onready var hud = $HUD
 @onready var task_area = $Taskarea
 @onready var audio_player = $AudioStreamPlayer2D
+@onready var correct_audio_player = $CorrectAudioPlayer
+@onready var incorrect_audio_player = $IncorrectAudioPlayer
 
 var current_task_index = 0
 
@@ -14,6 +16,10 @@ var task_paths = [
 ]
 
 func _ready():
+	# Load and play Ghana to Mississippi background music
+	audio_player.stream = preload("res://assets/audio/Ghana to Mississippi.mp3")
+	audio_player.play()
+	
 	load_task(current_task_index)
 	elephant.texture = load("res://assets/characters/elephant/elephant_neutral.png")
 	print("Loading Elephant Task")
@@ -49,11 +55,13 @@ func _on_task_completed(points_awarded: int, was_correct: bool):
 	# Update HUD
 	hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
 
-	# Update elephant expression
+	# Update elephant expression and play correct/incorrect audio
 	if was_correct:
 		elephant.texture = load("res://assets/characters/elephant/elephant_neutral.png")
+		$CorrectAudioPlayer.play()
 	else:
 		elephant.texture = load("res://assets/characters/elephant/elephant_sad.png")
+		$IncorrectAudioPlayer.play()
 
 	# Task Completion Logic
 	if task_key == "elephant_task1":

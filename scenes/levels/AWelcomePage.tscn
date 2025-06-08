@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3 uid="uid://b8fhr3pgkto35"]
+
+[ext_resource type="Script" uid="uid://ca5p4ykifi3e4" path="res://scripts/levels/welcome-page.gd" id="1_opqqr"]
+[ext_resource type="Texture2D" uid="uid://c5n8t0mgk5rs6" path="res://assets/backgrounds/bg-r.png" id="2_v027o"]
+
+[sub_resource type="FontFile" id="FontFile_8vjsq"]
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/45/0/ascent = 0.0
+cache/0/45/0/descent = 0.0
+cache/0/45/0/underline_position = 0.0
+cache/0/45/0/underline_thickness = 0.0
+cache/0/45/0/scale = 1.0
+
+[node name="WelcomePage" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_opqqr")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -43.0
+offset_right = 1202.0
+offset_bottom = 981.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_v027o")
+
+[node name="Safari Path" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 451.0
+offset_top = 185.0
+offset_right = 697.0
+offset_bottom = 231.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.266667, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.510166, 0.426134, 0, 1)
+theme_override_colors/font_outline_color = Color(0.645551, 1.82897e-06, 3.36915e-07, 1)
+theme_override_fonts/font = SubResource("FontFile_8vjsq")
+theme_override_font_sizes/font_size = 45
+text = "SAFARI PATHS"
+
+[node name="PlayButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 447.0
+offset_top = 419.0
+offset_right = 670.0
+offset_bottom = 530.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Let's Play"
+
+[node name="AudioPlayer" type="AudioStreamPlayer2D" parent="."]
+
+[connection signal="pressed" from="PlayButton" to="." method="_on_play_button_pressed"]

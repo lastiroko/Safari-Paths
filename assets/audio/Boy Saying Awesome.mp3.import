@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dmuaitt1j065i"
+path="res://.godot/imported/Boy Saying Awesome.mp3-c5645ce0069d981f3d7df3c712daf8f9.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/Boy Saying Awesome.mp3"
+dest_files=["res://.godot/imported/Boy Saying Awesome.mp3-c5645ce0069d981f3d7df3c712daf8f9.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
