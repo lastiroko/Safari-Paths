@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ctl8gc5nw2x00"]
 
-[ext_resource type="Script" uid="uid://bflouc1ll0jtb" path="res://scripts/tasks/fruit_sort_task.gd" id="1_gmfyx"]
+[ext_resource type="Script" uid="uid://bflouc1ll0jtb" path="res://scripts/tasks/Fruit_Sort_Task.gd" id="1_gmfyx"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_gmfyx"]
 font_size = 26

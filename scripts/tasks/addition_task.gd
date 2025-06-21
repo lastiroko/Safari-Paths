@@ -10,69 +10,87 @@ signal task_completed(points_awarded: int, was_correct: bool)
 
 var correct_answer: int
 var correct_answers_given := 0
-var task_finished := false # New flag to indicate when the task is internally complete
+var task_finished := false
 
 func _ready():
 	randomize()
 	generate_question()
 
 func generate_question():
-	# Prevent generating new questions if the task is already finished
 	if task_finished:
 		return
 
-	var a = randi() % 5 + 1
-	var b = randi() % 5 + 1
-	correct_answer = a + b
-	question_label.text = "What is %d + %d?" % [a, b]
+	var a: int
+	var b: int
+
+	while true:
+		a = randi() % 5 + 1
+		b = randi() % 5 + 1
+
+		if a < b:
+			var temp = a
+			a = b
+			b = temp
+
+		correct_answer = a - b
+
+		if correct_answer >= 0:
+			break
+
+	question_label.text = "What is %d - %d?" % [a, b]
 
 	var answers = [correct_answer]
-	# Generate 2 fake answers, ensuring they are not the correct answer and are unique
-	while answers.size() < 3:
-		var fake = randi() % 9 + 1 # Adjust range as needed for appropriate difficulty
-		if fake != correct_answer and not answers.has(fake):
-			answers.append(fake)
-	answers.shuffle() # Randomize the order of answers
 
-	# Assign answers to buttons and connect signals
+	while answers.size() < 3:
+		var fake_answer: int
+		var offset = randi() % 2 + 1
+
+		if randf() < 0.5:
+			fake_answer = correct_answer + offset
+		else:
+			fake_answer = correct_answer - offset
+
+		if fake_answer >= 0 and fake_answer <= 5 and not answers.has(fake_answer):
+			answers.append(fake_answer)
+
+	while answers.size() < 3:
+		var fallback_fake = randi() % 6
+		if not answers.has(fallback_fake):
+			answers.append(fallback_fake)
+
+	answers.shuffle()
+
 	for i in range(3):
 		var val = answers[i]
 		buttons[i].text = str(val)
-		
-		# Disconnect any existing signals to prevent multiple connections
+
 		for c in buttons[i].get_signal_connection_list("pressed"):
 			buttons[i].disconnect("pressed", c.callable)
 
-		# Connect the pressed signal to the handle_answer function
 		buttons[i].pressed.connect(func():
+			GameManager.play_button_click_sound()
 			handle_answer(val)
 		)
 
 func handle_answer(selected: int):
-	# If the task is finished, ignore further button presses
 	if task_finished:
 		return
 
 	if selected == correct_answer:
 		correct_answers_given += 1
 		print("✅ Correct! Total correct answers: %d" % correct_answers_given)
-		
-		# Always emit 100 points for a correct answer
+		GameManager.play_correct_sound()
 		emit_signal("task_completed", 100, true)
 
-		# Check if the task's internal completion condition is met (3 correct answers)
 		if correct_answers_given >= 3:
-			task_finished = true # Mark the task as finished
-			# Disable all buttons to prevent further interaction
+			task_finished = true
 			for btn in buttons:
 				btn.disabled = true
-			question_label.text = "Great job! Addition task complete!" # Update instruction
+			question_label.text = "🎉 Great job! Subtraction task complete!"
 		else:
-			# If not yet finished, generate a new question
 			generate_question()
 	else:
 		print("❌ Incorrect. Selected %d, expected %d" % [selected, correct_answer])
-		# Emit 0 points for an incorrect answer, as before
+		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
-		# Generate a new question regardless of correctness
 		generate_question()
