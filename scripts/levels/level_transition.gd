@@ -1,15 +1,17 @@
 extends Control
-@onready var anim_player = $AnimationPlayer
+
+@onready var continue_button = $ContinueButton
 
 func _ready():
 	print("Welcome to the Level Transition Scene!")
+	GameManager.play_level_complete_sound()
 
-	var continue_button = $ContinueButton
 	if continue_button:
-		continue_button.connect("pressed", Callable(self, "_on_continue_button_pressed"))
+		continue_button.pressed.connect(Callable(self, "_on_continue_button_pressed"))
 	else:
-		print("❌ Error: ContinueButton node not found.")
+		print("Error: ContinueButton node not found as a direct child of LevelTransition root.")
 
 func _on_continue_button_pressed():
+	GameManager.play_button_click_sound()
 	print("Continue button pressed. Loading Elephant Level...")
 	get_tree().change_scene_to_file("res://scenes/levels/ElephantLevel.tscn")

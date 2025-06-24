@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://d28oorq81uqei"]
+
+[ext_resource type="Script" uid="uid://delswp4a7o466" path="res://scripts/globals/GameManager.gd" id="1_ql66h"]
+[ext_resource type="AudioStream" uid="uid://dcfrwvdlthbis" path="res://assets/audio/button-click.mp3" id="2_2a6ah"]
+[ext_resource type="AudioStream" uid="uid://cuj61dm62qer1" path="res://assets/audio/Girl Saying Excellent.mp3" id="3_l4xer"]
+[ext_resource type="AudioStream" uid="uid://bh4nf0bxehf05" path="res://assets/audio/Girl Saying Let's Do It Again.mp3" id="4_m65vc"]
+[ext_resource type="AudioStream" uid="uid://dmuaitt1j065i" path="res://assets/audio/Boy Saying Awesome.mp3" id="5_426ks"]
+[ext_resource type="AudioStream" uid="uid://bn8pf6ujrjqgm" path="res://assets/audio/Kalahari_Dreaming.mp3" id="6_onxeq"]
+
+[node name="GameManager" type="Node2D"]
+script = ExtResource("1_ql66h")
+
+[node name="AudioButtonClick" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_2a6ah")
+
+[node name="AudioCorrectAnswer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_l4xer")
+
+[node name="AudioIncorrectAnswer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_m65vc")
+
+[node name="AudioLevelComplete" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_426ks")
+
+[node name="AudioBackgroundMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_onxeq")

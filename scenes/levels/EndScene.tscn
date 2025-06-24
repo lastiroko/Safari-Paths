@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxhabd7hv2kic"]
+
+[ext_resource type="Script" uid="uid://3cel2sp1gvrk" path="res://scripts/levels/End_Scene.gd" id="1_2eobd"]
+[ext_resource type="Texture2D" uid="uid://doac2rnmdtoeb" path="res://assets/backgrounds/bg-1.png" id="2_2rm00"]
+[ext_resource type="Texture2D" uid="uid://bymdx4cdc6k4" path="res://assets/items/RestartButton.png" id="3_r86dy"]
+[ext_resource type="Texture2D" uid="uid://b78au6jvpadv3" path="res://assets/items/Quitbtn.png" id="4_ih1r4"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6ah21"]
+font_size = 31
+font_color = Color(0, 0, 0, 1)
+outline_color = Color(4.68818e-05, 0.000112612, 0.000306692, 1)
+
+[node name="EndScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2eobd")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 1024.0
+scale = Vector2(1.19728, 0.675502)
+texture = ExtResource("2_2rm00")
+
+[node name="RestartButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 314.0
+offset_right = 1256.0
+offset_bottom = 1338.0
+scale = Vector2(0.35616, 0.386567)
+texture_normal = ExtResource("3_r86dy")
+
+[node name="QuitButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 659.0
+offset_top = 334.0
+offset_right = 1683.0
+offset_bottom = 1358.0
+scale = Vector2(0.37734, 0.358031)
+tooltip_text = "quit"
+texture_normal = ExtResource("4_ih1r4")
+
+[node name="CongratulationsLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 195.0
+offset_top = 93.0
+offset_right = 879.0
+offset_bottom = 137.0
+scale = Vector2(1.29888, 1.75448)
+text = "Congratulations  you have finished the game!!"
+label_settings = SubResource("LabelSettings_6ah21")
+
+[connection signal="pressed" from="RestartButton" to="." method="_on_Restart_pressed"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_Quit_pressed"]

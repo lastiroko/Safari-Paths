@@ -1,0 +1,869 @@
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\globals\GameManager.gd --- 
+
+extends Node
+
+var player_points: int = 0  # total, never reset
+var current_animal: String = "monkey"
+var current_task: int = 0  # 0 = addition, 1 = fruit sort, etc.
+
+# Task progress tracking (optional)
+var task_points: Dictionary = {
+	"monkey_addition": 0,
+	"monkey_fruits": 0,
+	"elephant_task1": 0,
+	"elephant_task2": 0,
+	#"lion_task1": 0, will work on these if we have more time
+	#"lion_task2": 0
+}
+
+func award_points(amount: int, task_key: String = "") -> void:
+	if amount <= 0:
+		return
+	player_points += amount
+	print("💰 Added %d points. Total now: %d" % [amount, player_points])
+	if task_key != "" and task_points.has(task_key):
+		task_points[task_key] += amount
+		print("📌 Task '%s' points: %d" % [task_key, task_points[task_key]])
+
+
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\levels\elephant-level.gd --- 
+.
+extends Node
+
+@onready var elephant = $Elephant
+@onready var hud = $HUD
+@onready var task_area = $Taskarea
+@onready var audio_player = $AudioStreamPlayer2D
+@onready var correct_audio_player = $CorrectAudioPlayer
+@onready var incorrect_audio_player = $IncorrectAudioPlayer
+
+var current_task_index = 0
+
+# List of task scenes for the Elephant level
+var task_paths = [
+	"res://scenes/tasks/MatchLettersTask.tscn",
+	"res://scenes/tasks/SubtractionTask.tscn"
+]
+
+func _ready():
+	# Load and play Ghana to Mississippi background music
+	audio_player.stream = preload("res://assets/audio/Ghana to Mississippi.mp3")
+	audio_player.play()
+	
+	load_task(current_task_index)
+	elephant.texture = load("res://assets/characters/elephant/elephant_neutral.png")
+	print("Loading Elephant Task")
+	
+	# --- FIX: Initialize HUD points when ElephantLevel loads ---
+	# Ensure the HUD's PointsLabel reflects the current total points from GameManager
+	if hud and hud.has_node("HUDContainer/PointsLabel"):
+		hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
+	else:
+		print("Warning: HUD or PointsLabel not found in ElephantLevel's _ready().")
+
+func load_task(index: int):
+	# Clear previous task
+	for child in task_area.get_children():
+		child.queue_free()
+
+	# Load and instance new task
+	var task_scene = load(task_paths[index]).instantiate()
+	task_scene.connect("task_completed", Callable(self, "_on_task_completed"))
+	task_area.add_child(task_scene)
+
+func _on_task_completed(points_awarded: int, was_correct: bool):
+	var task_key: String
+	if current_task_index == 0:
+		task_key = "elephant_task1"
+	else:
+		task_key = "elephant_task2"
+
+	# Award points if correct
+	if points_awarded > 0:
+		GameManager.award_points(points_awarded, task_key)
+
+	# Update HUD
+	hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
+
+	# Update elephant expression and play correct/incorrect audio
+	if was_correct:
+		elephant.texture = load("res://assets/characters/elephant/elephant_neutral.png")
+		$CorrectAudioPlayer.play()
+	else:
+		elephant.texture = load("res://assets/characters/elephant/elephant_sad.png")
+		$IncorrectAudioPlayer.play()
+
+	# Task Completion Logic
+	if task_key == "elephant_task1":
+		if GameManager.task_points[task_key] >= 500:
+			print("✅ Finished Match Letters Task. Moving to Subtraction Task.")
+			current_task_index += 1
+			load_task(current_task_index)
+	elif task_key == "elephant_task2":
+		if GameManager.task_points[task_key] >= 300:
+			print("✅ Finished Elephant Level. Moving to Lion Level!")
+			get_tree().change_scene_to_file("res://scenes/levels/LionLevel.tscn")
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\levels\end_scene.gd --- 
+.
+extends Control
+func _on_Restart_pressed():
+	get_tree().change_scene_to_file("res://scenes/levels/AWelcomePage.tscn")
+
+func _on_Quit_pressed():
+	get_tree().quit()
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\levels\level_transition.gd --- 
+.
+extends Control
+@onready var anim_player = $AnimationPlayer
+
+func _ready():
+	print("Welcome to the Level Transition Scene!")
+
+	var continue_button = $ContinueButton
+	if continue_button:
+		continue_button.connect("pressed", Callable(self, "_on_continue_button_pressed"))
+	else:
+		print("❌ Error: ContinueButton node not found.")
+
+func _on_continue_button_pressed():
+	print("Continue button pressed. Loading Elephant Level...")
+	get_tree().change_scene_to_file("res://scenes/levels/ElephantLevel.tscn")
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\levels\monkey-level.gd --- 
+.
+extends Node
+
+@onready var monkey = $Monkey
+@onready var hud = $HUD
+@onready var task_area = $Taskarea
+@onready var audio_player = $AudioPlayer
+
+var current_task_index = 0
+
+# List of task scenes for the Monkey level
+var task_paths = [
+	"res://scenes/tasks/AdditionTask.tscn",
+	"res://scenes/tasks/FruitSortTask.tscn"
+	
+]
+
+func _ready():
+	audio_player.stream = preload("res://assets/audio/Kalahari Dreaming.mp3")
+	audio_player.play()
+	load_task(current_task_index)
+	monkey.texture = load("res://assets/characters/monkey/monkey_neutral.png")
+	print("Loading task") # This print statement indicates the start of the MonkeyLevel
+
+func load_task(index: int):
+	# Clear the previous task if any exists in the task_area
+	for child in task_area.get_children():
+		child.queue_free() # Free up the old task scene
+
+	# Load and instance the new task scene based on the current_task_index
+	var task_scene = load(task_paths[index]).instantiate()
+	# Connect the "task_completed" signal from the new task scene to this script's handler
+	task_scene.connect("task_completed", Callable(self, "_on_task_completed"))
+	task_area.add_child(task_scene) # Add the new task scene to the scene tree
+
+
+
+func _on_task_completed(points_awarded: int, was_correct: bool):
+	var task_key: String
+	# Determine the task key based on the current task index
+	if current_task_index == 0:
+		task_key = "monkey_addition"
+	else:
+		task_key = "monkey_fruits"
+
+	# Award points if the task signal indicates points should be awarded (i.e., it was a correct action)
+	if points_awarded > 0:
+		GameManager.award_points(points_awarded, task_key)
+	
+	# Update the HUD to reflect the current total player points
+	hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
+
+	# Update the monkey's texture and play feedback audio
+	if was_correct:
+		monkey.texture = load("res://assets/characters/monkey/monkey_neutral.png")
+		$CorrectAudioPlayer.play()
+	else:
+		monkey.texture = load("res://assets/characters/monkey/monkey_sad.png")
+		$IncorrectAudioPlayer.play()
+
+	# --- Task Completion Checks ---
+	if task_key == "monkey_addition":
+		if GameManager.task_points[task_key] >= 300:
+			print("✅ Finished Addition Task (Points: %d). Moving to Fruit Sort." % GameManager.task_points[task_key])
+			current_task_index += 1
+			load_task(current_task_index)
+	elif task_key == "monkey_fruits":
+		if GameManager.task_points[task_key] >= 300:
+			print("✅ Finished Fruit Sort Task (Points: %d). Moving to Elephant Level." % GameManager.task_points[task_key])
+			# Change to the next level scene (Elephant Level)
+			get_tree().change_scene_to_file("res://scenes/levels/Level_transition.tscn")
+
+	
+	# The individual task scenes (AdditionTask, FruitSortTask) are responsible for
+	# regenerating questions/fruits if the task is not yet complete and an action occurs.
+	# No explicit regeneration logic is needed here in MonkeyLevel.
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\levels\welcome-page.gd --- 
+.
+extends Control
+
+@onready var audio_player = $AudioPlayer
+
+func _ready():
+	# Load and play Ghana to Mississippi background music
+	audio_player.stream = preload("res://assets/audio/Ghana to Mississippi.mp3")
+	audio_player.play()
+
+func _on_play_button_pressed() -> void:
+	get_tree().change_scene_to_file("res://scenes/levels/MonkeyLevel.tscn")
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\tasks\addition_task.gd --- 
+.
+extends Control
+signal task_completed(points_awarded: int, was_correct: bool)
+
+@onready var question_label = $QuestionLabel
+@onready var buttons := [
+	$HBoxContainer/Button1,
+	$HBoxContainer/Button2,
+	$HBoxContainer/Button3
+]
+
+var correct_answer: int
+var correct_answers_given := 0
+var task_finished := false # New flag to indicate when the task is internally complete
+
+func _ready():
+	randomize()
+	generate_question()
+
+func generate_question():
+	# Prevent generating new questions if the task is already finished
+	if task_finished:
+		return
+
+	var a = randi() % 5 + 1
+	var b = randi() % 5 + 1
+	correct_answer = a + b
+	question_label.text = "What is %d + %d?" % [a, b]
+
+	var answers = [correct_answer]
+	# Generate 2 fake answers, ensuring they are not the correct answer and are unique
+	while answers.size() < 3:
+		var fake = randi() % 9 + 1 # Adjust range as needed for appropriate difficulty
+		if fake != correct_answer and not answers.has(fake):
+			answers.append(fake)
+	answers.shuffle() # Randomize the order of answers
+
+	# Assign answers to buttons and connect signals
+	for i in range(3):
+		var val = answers[i]
+		buttons[i].text = str(val)
+		
+		# Disconnect any existing signals to prevent multiple connections
+		for c in buttons[i].get_signal_connection_list("pressed"):
+			buttons[i].disconnect("pressed", c.callable)
+
+		# Connect the pressed signal to the handle_answer function
+		buttons[i].pressed.connect(func():
+			handle_answer(val)
+		)
+
+func handle_answer(selected: int):
+	# If the task is finished, ignore further button presses
+	if task_finished:
+		return
+
+	if selected == correct_answer:
+		correct_answers_given += 1
+		print("✅ Correct! Total correct answers: %d" % correct_answers_given)
+		
+		# Always emit 100 points for a correct answer
+		emit_signal("task_completed", 100, true)
+
+		# Check if the task's internal completion condition is met (3 correct answers)
+		if correct_answers_given >= 3:
+			task_finished = true # Mark the task as finished
+			# Disable all buttons to prevent further interaction
+			for btn in buttons:
+				btn.disabled = true
+			question_label.text = "Great job! Addition task complete!" # Update instruction
+		else:
+			# If not yet finished, generate a new question
+			generate_question()
+	else:
+		print("❌ Incorrect. Selected %d, expected %d" % [selected, correct_answer])
+		# Emit 0 points for an incorrect answer, as before
+		emit_signal("task_completed", 0, false)
+		# Generate a new question regardless of correctness
+		generate_question()
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\tasks\fruit_sort_task.gd --- 
+.
+extends Control
+signal task_completed(points_awarded: int, was_correct: bool)
+
+@onready var grid := $Grid
+@onready var instruction := $InstructionLabel
+
+var all_fruits := [
+	{ "name": "Appleg", "quality": "good" },
+	{ "name": "Bananab", "quality": "bad" },
+	{ "name": "Dragonfruitg", "quality": "good" },
+	{ "name": "Pearb", "quality": "bad" },
+	{ "name": "Pineappleg", "quality": "good" },
+	{ "name": "Orangeb", "quality": "bad" },
+	{ "name": "Grapesg", "quality": "good" },
+	{ "name": "Plumb", "quality": "bad" },
+	{ "name": "Strawberryg", "quality": "good" },
+	{ "name": "Mangob", "quality": "bad" },
+	{ "name": "Kiwig", "quality": "good" },
+	{ "name": "Guavab", "quality": "bad" },
+	{ "name": "Papayag", "quality": "good" },
+	{ "name": "Figb", "quality": "bad" },
+	{ "name": "Watermelong", "quality": "good" }
+]
+
+# This array will store the 6 fruit dictionaries currently assigned to the grid buttons.
+# Each dictionary will have a 'name', 'quality', and 'is_picked' status.
+var current_grid_fruits: Array[Dictionary] = [] 
+var picked_good_fruits_count := 0 # Tracks how many good fruits have been successfully picked
+var task_finished := false
+
+func _ready():
+	randomize()
+	instruction.text = "🍎 Pick the healthy fruits!"
+	initialize_grid_with_fruits() # Initial call to populate the grid
+
+func initialize_grid_with_fruits():
+	# This function is called only at the very start of the task.
+	# It populates current_grid_fruits with 6 initial fruits, ensuring 3 good ones.
+	
+	current_grid_fruits.clear()
+	var temp_all_fruits = all_fruits.duplicate()
+	temp_all_fruits.shuffle()
+
+	var good_fruits_added_to_initial_set = 0
+	var initial_fruits_temp: Array[Dictionary] = []
+
+	# First, try to get 3 good fruits and 3 bad fruits for the initial display
+	var good_candidates = temp_all_fruits.filter(func(f): return f["quality"] == "good")
+	var bad_candidates = temp_all_fruits.filter(func(f): return f["quality"] == "bad")
+
+	# Add 3 good fruits
+	for i in range(min(3, good_candidates.size())):
+		var fruit = good_candidates[i].duplicate()
+		fruit["is_picked"] = false
+		initial_fruits_temp.append(fruit)
+		good_fruits_added_to_initial_set += 1
+
+	# Add remaining fruits to fill up to 6, prioritizing bad fruits
+	var remaining_slots = 6 - initial_fruits_temp.size()
+	var combined_remaining = bad_candidates + good_candidates.slice(good_fruits_added_to_initial_set)
+	combined_remaining.shuffle()
+
+	for i in range(min(remaining_slots, combined_remaining.size())):
+		var fruit = combined_remaining[i].duplicate()
+		fruit["is_picked"] = false
+		initial_fruits_temp.append(fruit)
+	
+	# If for some reason we still don't have 6 fruits (e.g.`, very limited fruit list),
+	# fill with duplicates or placeholders. (Shouldn't be an issue with current `all_fruits`)
+	while initial_fruits_temp.size() < 6:
+		initial_fruits_temp.append({ "name": "Placeholder", "quality": "bad", "is_picked": false })
+
+	initial_fruits_temp.shuffle() # Shuffle the initial set to randomize positions
+	current_grid_fruits = initial_fruits_temp
+	update_buttons_display()
+
+func reshuffle_unpicked_fruits():
+	# This function is called when a BAD fruit is picked.
+	# It preserves already picked good fruits and re-generates the others.
+
+	var new_selectable_fruits_for_slots: Array[Dictionary] = []
+	var available_fruits_pool = all_fruits.duplicate()
+
+	# Get names of fruits that are currently picked (and should stay)
+	var names_of_currently_picked_good_fruits = []
+	for fruit_data in current_grid_fruits:
+		if fruit_data.get("is_picked", false):
+			names_of_currently_picked_good_fruits.append(fruit_data["name"])
+	
+	# Filter out these picked fruits from the available pool for new selections
+	available_fruits_pool = available_fruits_pool.filter(func(f): 
+		return not names_of_currently_picked_good_fruits.has(f["name"])
+	)
+
+	var good_available = available_fruits_pool.filter(func(f): return f["quality"] == "good")
+	var bad_available = available_fruits_pool.filter(func(f): return f["quality"] == "bad")
+
+	var num_unpicked_slots = 6 - picked_good_fruits_count
+	var num_good_needed_for_completion = 3 - picked_good_fruits_count
+
+	# Determine how many good fruits to include in the new selectable set for the unpicked slots.
+	# Ensure at least 'num_good_needed_for_completion' good fruits are present,
+	# but always at least 2 if we still need more than 0 good fruits to complete the task.
+	var num_good_to_add_to_new_set = max(0, num_good_needed_for_completion)
+	if picked_good_fruits_count < 3: # If task not complete
+		num_good_to_add_to_new_set = max(num_good_to_add_to_new_set, 2) # Ensure at least 2 good options
+	
+	# Clamp to actual available good fruits
+	num_good_to_add_to_new_set = min(num_good_to_add_to_new_set, good_available.size())
+
+	# Add the required number of good fruits to the new selectable set
+	good_available.shuffle()
+	for i in range(num_good_to_add_to_new_set):
+		var fruit = good_available.pop_front().duplicate()
+		fruit["is_picked"] = false # Ensure new fruits are not marked as picked
+		new_selectable_fruits_for_slots.append(fruit)
+
+	# Fill the remaining slots with a mix of remaining good and bad fruits
+	var combined_remaining = good_available + bad_available
+	combined_remaining.shuffle()
+
+	while new_selectable_fruits_for_slots.size() < num_unpicked_slots and combined_remaining.size() > 0:
+		var fruit = combined_remaining.pop_front().duplicate()
+		fruit["is_picked"] = false
+		new_selectable_fruits_for_slots.append(fruit)
+
+	# If we still don't have enough fruits to fill the slots (e.g., ran out of unique fruits), fill with bad ones
+	while new_selectable_fruits_for_slots.size() < num_unpicked_slots:
+		new_selectable_fruits_for_slots.append({ "name": "FillerBad", "quality": "bad", "is_picked": false }) # Fallback
+
+	new_selectable_fruits_for_slots.shuffle() # Shuffle the newly generated selectable fruits
+
+	# Now, update current_grid_fruits by replacing only the unpicked slots
+	var new_selectable_index = 0
+	for i in range(6):
+		if not current_grid_fruits[i].get("is_picked", false):
+			# This slot was not picked, so replace it with a new selectable fruit
+			if new_selectable_index < new_selectable_fruits_for_slots.size():
+				current_grid_fruits[i] = new_selectable_fruits_for_slots[new_selectable_index]
+				new_selectable_index += 1
+			else:
+				# Fallback if somehow we run out of new selectable fruits (shouldn't happen)
+				current_grid_fruits[i] = { "name": "N/A", "quality": "bad", "is_picked": false }
+
+	update_buttons_display()
+
+
+func update_buttons_display():
+	# Iterate through all 6 buttons in the grid
+	for i in range(grid.get_child_count()):
+		var btn := grid.get_child(i) as TextureButton
+		btn.custom_minimum_size = Vector2(128, 128)  # or 256
+
+
+		
+		# Disconnect any existing signals to prevent multiple connections
+		for c in btn.get_signal_connection_list("pressed"):
+			btn.disconnect("pressed", c.callable)
+
+		if i < current_grid_fruits.size():
+			var fruit = current_grid_fruits[i]
+			btn.tooltip_text = fruit["name"]  # ✅ shows fruit name on hover
+
+			
+			# Load the texture
+			var tex_path = "res://assets/fruits/%s.png" % fruit["name"]
+			var texture = load(tex_path) if ResourceLoader.exists(tex_path) else null
+			btn.texture_normal = texture
+			
+			if fruit.get("is_picked", false):
+				btn.disabled = true # Already picked good fruit
+			else:
+				btn.disabled = false # Selectable fruit
+				# Pass the index to handle_pick so we can update the correct fruit in current_grid_fruits
+				btn.pressed.connect(func():
+					handle_pick(fruit,btn, i) 
+				)
+		else:
+			btn.texture_normal = null
+			btn.tooltip_text = ""
+			btn.disabled = true
+
+func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
+	if task_finished:
+		return
+
+	btn.disabled = true # Disable the button immediately after it's picked
+
+	if fruit["quality"] == "good":
+		current_grid_fruits[index_in_grid]["is_picked"] = true
+		picked_good_fruits_count += 1
+		print("✅ Correct fruit picked: %s. Total good fruits: %d" % [fruit["name"], picked_good_fruits_count])
+
+		emit_signal("task_completed", 100, true) # Emit points for each correct pick
+
+		if picked_good_fruits_count >= 3:
+			task_finished = true
+			instruction.text = "Great job! Fruit sorting task complete!"
+
+			# ✅ No timer anymore, disable buttons immediately
+			for b in grid.get_children():
+				b.disabled = true
+			#emit_signal("task_completed", 0, true) # Final signal for task completion
+		else:
+			update_buttons_display() # Re-render
+	else:
+		print("❌ Incorrect fruit picked: %s" % fruit["name"])
+		emit_signal("task_completed", 0, false)
+		
+		# Only reshuffle if task not yet finished
+		if not task_finished:
+			await get_tree().create_timer(0.3).timeout
+			reshuffle_unpicked_fruits()
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\tasks\MatchLettersTask.gd --- 
+.
+extends Control
+signal task_completed(points_awarded: int, was_correct: bool)
+
+# Corrected paths assuming InstructionLabel is a direct child,
+# and GridLetters/GridPictures are children of a VBoxContainer.
+@onready var instruction_label = $InstructionLabel
+@onready var letters_grid = $VBoxContainer/GridLetters
+@onready var pictures_grid = $VBoxContainer/GridPictures
+# Removed @onready var for AudioIncorrectMatch as user removed sound references
+
+# Define a dictionary to map color names to Godot Color objects
+const COLORS_MAP = {
+	"Blue": Color("0000ff"),    # Pure Blue
+	"Orange": Color("ff7f00"),  # Orange
+	"Purple": Color("800080"),  # Purple
+	"Yellow": Color("ffff00"),  # Pure Yellow
+	"Green": Color("008000")    # Green (darker for contrast with letters)
+}
+
+var pairs = [
+	{ "letter": "B", "color": "Blue" },
+	{ "letter": "O", "color": "Orange" },
+	{ "letter": "P", "color": "Purple" },
+	{ "letter": "Y", "color": "Yellow" },
+	{ "letter": "G", "color": "Green" }
+]
+
+var selected_picture_button: Button = null # Stores the currently selected picture button
+var selected_letter_button: Button = null  # Stores the currently selected letter button
+var task_finished = false
+var matches_made = 0
+
+func _ready():
+	randomize()
+	instruction_label.text = "🧩 Match the letter to the color!"
+	generate_ui()
+
+# Helper function to create a StyleBoxFlat for a given color
+func _create_color_stylebox(color: Color, border_width: int = 2, border_color: Color = Color.BLACK) -> StyleBoxFlat:
+	var stylebox = StyleBoxFlat.new()
+	stylebox.set_bg_color(color)
+	stylebox.set_border_width_all(0)
+	stylebox.set_border_color(border_color)
+	stylebox.set_corner_radius_all(8) # Add rounded corners
+	return stylebox
+
+# Helper function to apply a style to a button's normal state
+func _apply_normal_style(button: Button, color_name: String):
+	if COLORS_MAP.has(color_name):
+		var normal_color = COLORS_MAP[color_name]
+		button.add_theme_stylebox_override("normal", _create_color_stylebox(normal_color))
+		# For pressed/hover/disabled states, you might want to define separate styles
+		# or derive them from the normal style. For now, Godot's default darkens/lightens.
+		button.add_theme_stylebox_override("pressed", _create_color_stylebox(normal_color.darkened(0.2)))
+		button.add_theme_stylebox_override("hover", _create_color_stylebox(normal_color.lightened(0.2)))
+		# Disabled buttons will just use their default disabled look, which usually desaturates.
+		# If you want a specific disabled color:
+		button.add_theme_stylebox_override("disabled", _create_color_stylebox(normal_color.darkened(0.5)))
+	else:
+		# Fallback for unknown colors
+		button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.GRAY))
+
+
+func generate_ui():
+	# Setup Pictures Grid (Color Buttons)
+	var shuffled_pictures = pairs.duplicate()
+	shuffled_pictures.shuffle()
+
+	for i in range(5):
+		var btn = pictures_grid.get_child(i) as Button
+		btn.text = "" # No text, button will show color
+		btn.disabled = false
+		btn.set_meta("letter", shuffled_pictures[i]["letter"]) # Still store associated letter
+		btn.set_meta("matched", false)
+		btn.set_meta("color_name", shuffled_pictures[i]["color"]) # Store color name for easier lookup
+		
+		_apply_normal_style(btn, shuffled_pictures[i]["color"]) # Apply initial color style
+
+		# Disconnect any old signals to prevent multiple connections
+		for c in btn.get_signal_connection_list("pressed"):
+			btn.disconnect("pressed", c.callable)
+		btn.pressed.connect(func():
+			# GameManager.play_button_click_sound() # User removed sound, keep it commented out.
+			handle_picture_selected(btn)
+		)
+
+	# Setup Letters Grid (Letter Buttons)
+	var shuffled_letters = pairs.duplicate()
+	shuffled_letters.shuffle()
+
+	for i in range(5):
+		var btn = letters_grid.get_child(i) as Button
+		btn.text = shuffled_letters[i]["letter"] # Display letter
+		btn.disabled = false
+		btn.set_meta("letter", shuffled_letters[i]["letter"])
+		btn.set_meta("matched", false)
+		
+		# Set font color to black for better contrast if background is light
+		btn.add_theme_color_override("font_color", Color.BLACK) 
+		# You might also want a default StyleBoxFlat for letter buttons
+		btn.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 2, Color.DARK_GRAY))
+		btn.add_theme_stylebox_override("pressed", _create_color_stylebox(Color.GRAY, 2, Color.DARK_GRAY))
+		btn.add_theme_stylebox_override("hover", _create_color_stylebox(Color.WHITE, 2, Color.DARK_GRAY))
+
+
+		# Disconnect any old signals to prevent multiple connections
+		for c in btn.get_signal_connection_list("pressed"):
+			btn.disconnect("pressed", c.callable)
+		btn.pressed.connect(func():
+			# GameManager.play_button_click_sound() # User removed sound, keep it commented out.
+			handle_letter_selected(btn)
+		)
+
+func handle_picture_selected(btn: Button):
+	if btn.get_meta("matched") or task_finished:
+		return
+
+	# Reset previous selection highlight if any
+	if selected_picture_button != null:
+		_apply_normal_style(selected_picture_button, selected_picture_button.get_meta("color_name"))
+	
+	selected_picture_button = btn
+	# Apply selected style
+	selected_picture_button.add_theme_stylebox_override("normal", _create_color_stylebox(selected_picture_button.get_meta("color_name"), 4, Color.GREEN)) # Green border for selected
+
+	# Disable all other picture buttons to enforce single selection
+	for b in pictures_grid.get_children():
+		if b != selected_picture_button and not b.get_meta("matched"):
+			b.disabled = true
+	
+	# Enable all unmatched letter buttons
+	for b in letters_grid.get_children():
+		if not b.get_meta("matched"):
+			b.disabled = false
+	
+	if selected_letter_button != null:
+		check_match()
+
+func handle_letter_selected(btn: Button):
+	if btn.get_meta("matched") or task_finished:
+		return
+
+	# Reset previous selection highlight if any
+	if selected_letter_button != null:
+		# Re-apply its normal style, assuming letters have a consistent base style
+		selected_letter_button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 2, Color.DARK_GRAY))
+	
+	selected_letter_button = btn
+	# Apply selected style (e.g., thicker green border for selected letter)
+	selected_letter_button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 4, Color.GREEN))
+
+
+	# Disable all other letter buttons
+	for b in letters_grid.get_children():
+		if b != selected_letter_button and not b.get_meta("matched"):
+			b.disabled = true
+	
+	# Enable all unmatched picture buttons
+	for b in pictures_grid.get_children():
+		if not b.get_meta("matched"):
+			b.disabled = false
+	
+	if selected_picture_button != null:
+		check_match()
+
+func check_match():
+	if selected_letter_button == null or selected_picture_button == null:
+		return
+
+	var letter_meta = selected_letter_button.get_meta("letter")
+	var picture_meta_letter = selected_picture_button.get_meta("letter")
+
+	if letter_meta == picture_meta_letter:
+		print("✅ Correct Match: %s (Letter) -> %s (Color)" % [selected_letter_button.text, selected_picture_button.get_meta("color_name")])
+		# GameManager.play_correct_sound() # User removed sound, keep it commented out.
+		
+		# Permanently disable and mark as matched
+		selected_letter_button.disabled = true
+		selected_letter_button.set_meta("matched", true)
+		selected_picture_button.disabled = true
+		selected_picture_button.set_meta("matched", true)
+		
+		# Apply a "matched" visual style (e.g., a checkmark, or different background color, or just disabled)
+		# For example, to make matched buttons look slightly different but disabled:
+		selected_letter_button.add_theme_stylebox_override("disabled", _create_color_stylebox(Color.GRAY.lightened(0.2), 2, Color.BLUE))
+		selected_picture_button.add_theme_stylebox_override("disabled", _create_color_stylebox(COLORS_MAP[selected_picture_button.get_meta("color_name")].lightened(0.2), 2, Color.BLUE))
+
+
+		matches_made += 1
+		emit_signal("task_completed", 100, true)
+
+		reset_selection()
+
+		if matches_made >= 5:
+			task_finished = true
+			instruction_label.text = "🎉 Great job! You matched all!"
+			emit_signal("task_completed", 0, true) 
+	else:
+		print("❌ Incorrect Match: %s (Letter) vs %s (Color)" % [selected_letter_button.text, selected_picture_button.get_meta("color_name")])
+		# GameManager.play_incorrect_sound() # User removed sound, keep it commented out.
+		emit_signal("task_completed", 0, false)
+
+		# Reset styles of the two selected buttons to their normal (unselected) appearance before re-enabling
+		_apply_normal_style(selected_picture_button, selected_picture_button.get_meta("color_name"))
+		selected_letter_button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 2, Color.DARK_GRAY))
+
+		reset_selection()
+
+func reset_selection():
+	selected_letter_button = null
+	selected_picture_button = null
+
+	# Re-enable all unmatched letter buttons
+	for b in letters_grid.get_children():
+		if not b.get_meta("matched"):
+			b.disabled = false
+	
+	# Re-enable all unmatched picture buttons
+	for b in pictures_grid.get_children():
+		if not b.get_meta("matched"):
+			b.disabled = false
+.
+.
+// --- File: D:\Dev\code-projects\SDIAssignments\safari-paths\scripts\tasks\subtraction-task.gd --- 
+.
+extends Control
+signal task_completed(points_awarded: int, was_correct: bool)
+
+@onready var question_label = $QuestionLabel
+@onready var buttons := [
+	$HBoxContainer/Button1,
+	$HBoxContainer/Button2,
+	$HBoxContainer/Button3
+]
+
+var correct_answer: int
+var correct_answers_given := 0
+var task_finished := false
+
+func _ready():
+	randomize()
+	generate_question()
+
+func generate_question():
+	if task_finished:
+		return
+	
+	var a: int
+	var b: int
+	
+	# Loop until a suitable 'a' and 'b' are found
+	# 'a' and 'b' will now be between 1 and 5
+	while true:
+		a = randi() % 5 + 1  # Numbers from 1 to 5
+		b = randi() % 5 + 1  # Numbers from 1 to 5
+		
+		# Ensure 'a' is always greater than or equal to 'b' for positive or zero results
+		if a < b: # If b is larger, swap them
+			var temp = a
+			a = b
+			b = temp
+		
+		correct_answer = a - b
+		
+		# Ensure the correct answer is non-negative (0 or greater).
+		# If you want strictly positive answers (e.g., 1 or greater), change to `correct_answer > 0`.
+		if correct_answer >= 0: 
+			break # Found suitable numbers
+	
+	question_label.text = "What is %d - %d?" % [a, b]
+
+	var answers = [correct_answer]
+	
+	# Generate 2 fake answers that are close to the correct answer but not identical
+	while answers.size() < 3:
+		var fake_answer: int
+		var offset = randi() % 2 + 1 # Offset by 1 or 2 from correct answer for smaller range
+		
+		# Randomly make the offset positive or negative
+		if randf() < 0.5:
+			fake_answer = correct_answer + offset
+		else:
+			fake_answer = correct_answer - offset
+		
+		# Ensure fake answers are within a reasonable range (e.g., 0 to 5 for subtraction 1-5)
+		# and are unique and not the correct answer
+		if fake_answer >= 0 and fake_answer <= 5 and not answers.has(fake_answer):
+			answers.append(fake_answer)
+	
+	# Fallback: If for some reason we still don't have 3 unique answers (very rare with above logic),
+	# fill with completely random numbers in the expected answer range.
+	while answers.size() < 3:
+		var fallback_fake = randi() % 6 # 0 to 5
+		if not answers.has(fallback_fake):
+			answers.append(fallback_fake)
+			
+	answers.shuffle()
+
+	# Assign answers to buttons
+	for i in range(3):
+		var val = answers[i]
+		buttons[i].text = str(val)
+		
+		# Disconnect old signals to prevent multiple connections
+		for c in buttons[i].get_signal_connection_list("pressed"):
+			buttons[i].disconnect("pressed", c.callable)
+
+		buttons[i].pressed.connect(func():
+			handle_answer(val)
+		)
+
+func handle_answer(selected: int):
+	if task_finished:
+		return
+
+	if selected == correct_answer:
+		correct_answers_given += 1
+		print("✅ Correct! Total correct answers: %d" % correct_answers_given)
+		emit_signal("task_completed", 100, true)
+
+		if correct_answers_given >= 3: # Task complete after 3 correct answers
+			task_finished = true
+			for btn in buttons:
+				btn.disabled = true # Disable all buttons
+			question_label.text = "🎉 Great job! Subtraction task complete!"
+			# Emit 0 points as the task is fully completed
+			emit_signal("task_completed", 0, true)
+			get_tree().change_scene_to_file("res://scenes/levels/end_scene.tscn")
+ 
+		else:
+			generate_question() # Generate a new question if task not finished
+	else:
+		print("❌ Incorrect. Selected %d, expected %d" % [selected, correct_answer])
+		emit_signal("task_completed", 0, false) # Emit 0 points for incorrect answer
+		
+		generate_question() # Always generate a new question after an incorrect attempt
+.
+.

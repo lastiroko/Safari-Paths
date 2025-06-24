@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c16io24hf4nj"]
 
-[ext_resource type="Script" uid="uid://4vlaa50xn76x" path="res://scripts/tasks/MatchLettersTask.gd" id="1_7ny55"]
+[ext_resource type="Script" uid="uid://4vlaa50xn76x" path="res://scripts/tasks/Match_Letters_Task.gd" id="1_7ny55"]
 
 [node name="MatchLettersTask" type="Control"]
 layout_mode = 3
