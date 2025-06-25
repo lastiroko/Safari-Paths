@@ -7,7 +7,6 @@ signal task_completed(points_awarded: int, was_correct: bool)
 @onready var letters_grid = $VBoxContainer/GridLetters
 @onready var pictures_grid = $VBoxContainer/GridPictures
 
-# Define a dictionary to map color names to Godot Color objects
 const COLORS_MAP = {
 	"Blue": Color("0000ff"),    # Pure Blue
 	"Orange": Color("ff7f00"),  # Orange
@@ -34,17 +33,14 @@ func _ready():
 	instruction_label.text = "🧩 Match the letter to the color!"
 	generate_ui()
 
-# Helper function to create a StyleBoxFlat for a given color
-# Set border_width default to 0 to remove borders
 func _create_color_stylebox(color: Color, border_width: int = 0, border_color: Color = Color.BLACK) -> StyleBoxFlat:
 	var stylebox = StyleBoxFlat.new()
 	stylebox.set_bg_color(color)
-	stylebox.set_border_width_all(border_width) # Now defaults to 0
+	stylebox.set_border_width_all(border_width)
 	stylebox.set_border_color(border_color)
 	stylebox.set_corner_radius_all(8)
 	return stylebox
 
-# Helper function to apply a style to a button's normal state
 func _apply_normal_style(button: Button, color_name: String):
 	if COLORS_MAP.has(color_name):
 		var normal_color = COLORS_MAP[color_name]
@@ -57,40 +53,37 @@ func _apply_normal_style(button: Button, color_name: String):
 
 
 func generate_ui():
-	# Setup Pictures Grid (Color Buttons)
 	var shuffled_pictures = pairs.duplicate()
 	shuffled_pictures.shuffle()
 
 	for i in range(5):
 		var btn = pictures_grid.get_child(i) as Button
-		btn.text = "" # No text, button will show color
+		btn.text = "" # no text, button will show color
 		btn.disabled = false
 		btn.set_meta("letter", shuffled_pictures[i]["letter"])
 		btn.set_meta("matched", false)
 		btn.set_meta("color_name", shuffled_pictures[i]["color"])
 
-		_apply_normal_style(btn, shuffled_pictures[i]["color"]) # Apply initial color style
+		_apply_normal_style(btn, shuffled_pictures[i]["color"])
 
 		for c in btn.get_signal_connection_list("pressed"):
 			btn.disconnect("pressed", c.callable)
 		btn.pressed.connect(func():
-			GameManager.play_button_click_sound() # Re-enabled sound call
+			GameManager.play_button_click_sound()
 			handle_picture_selected(btn)
 		)
 
-	# Setup Letters Grid (Letter Buttons)
 	var shuffled_letters = pairs.duplicate()
 	shuffled_letters.shuffle()
 
 	for i in range(5):
 		var btn = letters_grid.get_child(i) as Button
-		btn.text = shuffled_letters[i]["letter"] # Display letter
+		btn.text = shuffled_letters[i]["letter"]
 		btn.disabled = false
 		btn.set_meta("letter", shuffled_letters[i]["letter"])
 		btn.set_meta("matched", false)
 
 		btn.add_theme_color_override("font_color", Color.BLACK)
-		# Letter buttons also have no border
 		btn.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 0, Color.TRANSPARENT))
 		btn.add_theme_stylebox_override("pressed", _create_color_stylebox(Color.GRAY, 0, Color.TRANSPARENT))
 		btn.add_theme_stylebox_override("hover", _create_color_stylebox(Color.WHITE, 0, Color.TRANSPARENT))
@@ -100,7 +93,7 @@ func generate_ui():
 		for c in btn.get_signal_connection_list("pressed"):
 			btn.disconnect("pressed", c.callable)
 		btn.pressed.connect(func():
-			GameManager.play_button_click_sound() # Re-enabled sound call
+			GameManager.play_button_click_sound()
 			handle_letter_selected(btn)
 		)
 
@@ -112,7 +105,6 @@ func handle_picture_selected(btn: Button):
 		_apply_normal_style(selected_picture_button, selected_picture_button.get_meta("color_name"))
 
 	selected_picture_button = btn
-	# Apply selected style with a GREEN border for highlight
 	selected_picture_button.add_theme_stylebox_override("normal", _create_color_stylebox(selected_picture_button.get_meta("color_name"), 4, Color.GREEN))
 
 	for b in pictures_grid.get_children():
@@ -134,7 +126,6 @@ func handle_letter_selected(btn: Button):
 		selected_letter_button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 0, Color.TRANSPARENT))
 
 	selected_letter_button = btn
-	# Apply selected style with a GREEN border for highlight
 	selected_letter_button.add_theme_stylebox_override("normal", _create_color_stylebox(Color.LIGHT_GRAY, 4, Color.GREEN))
 
 
@@ -157,15 +148,15 @@ func check_match():
 	var picture_meta_letter = selected_picture_button.get_meta("letter")
 
 	if letter_meta == picture_meta_letter:
-		print("✅ Correct Match: %s (Letter) -> %s (Color)" % [selected_letter_button.text, selected_picture_button.get_meta("color_name")])
-		GameManager.play_correct_sound() # Re-enabled sound call
+
+		GameManager.play_correct_sound()
 
 		selected_letter_button.disabled = true
 		selected_letter_button.set_meta("matched", true)
 		selected_picture_button.disabled = true
 		selected_picture_button.set_meta("matched", true)
 
-		# Apply a "matched" visual style with a BLUE border for correct matches
+
 		selected_letter_button.add_theme_stylebox_override("disabled", _create_color_stylebox(Color.GRAY.lightened(0.2), 2, Color.BLUE))
 		selected_picture_button.add_theme_stylebox_override("disabled", _create_color_stylebox(COLORS_MAP[selected_picture_button.get_meta("color_name")].lightened(0.2), 2, Color.BLUE))
 
@@ -180,7 +171,7 @@ func check_match():
 			instruction_label.text = "🎉 Great job! You matched all!"
 			emit_signal("task_completed", 0, true)
 	else:
-		print("❌ Incorrect Match: %s (Letter) vs %s (Color)" % [selected_letter_button.text, selected_picture_button.get_meta("color_name")])
+
 		GameManager.play_incorrect_sound() # Re-enabled sound call
 		emit_signal("task_completed", 0, false)
 

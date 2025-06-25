@@ -3,7 +3,6 @@ extends Control
 @onready var continue_button = $ContinueButton
 
 func _ready():
-	print("Welcome to the Level Transition Scene!")
 	GameManager.play_level_complete_sound()
 
 	if continue_button:
@@ -13,5 +12,4 @@ func _ready():
 
 func _on_continue_button_pressed():
 	GameManager.play_button_click_sound()
-	print("Continue button pressed. Loading Elephant Level...")
 	get_tree().change_scene_to_file("res://scenes/levels/ElephantLevel.tscn")

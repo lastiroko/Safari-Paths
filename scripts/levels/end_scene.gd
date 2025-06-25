@@ -5,7 +5,6 @@ extends Control
 @onready var congratulation_label = $CongratulationsLabel
 
 func _ready():
-	print("Welcome to the End Scene!")
 	GameManager.play_level_complete_sound()
 	GameManager.stop_background_music()
 

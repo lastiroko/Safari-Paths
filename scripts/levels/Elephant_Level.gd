@@ -28,7 +28,7 @@ func _ready():
 	else:
 		print("Warning: Elephant node not found in ElephantLevel scene.")
 
-	print("Loading Elephant Task")
+
 
 	if hud and hud.has_node("HUDContainer/PointsLabel"):
 		hud.get_node("HUDContainer/PointsLabel").text = "Points: %d" % GameManager.player_points
@@ -71,13 +71,10 @@ func _on_task_completed(points_awarded: int, was_correct: bool):
 
 	if task_key == "elephant_task1":
 		if GameManager.task_points[task_key] >= 500:
-			print("✅ Finished Match Letters Task. Moving to Subtraction Task.")
 			current_task_index += 1
 			load_task(current_task_index)
 	elif task_key == "elephant_task2":
 		if GameManager.task_points[task_key] >= 300:
-			print("✅ Finished Elephant Level. Moving to End Screen!")
-
 			transitioning_level = true
 
 			if audio_player:

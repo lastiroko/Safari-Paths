@@ -68,7 +68,7 @@ func generate_question():
 			buttons[i].disconnect("pressed", c.callable)
 
 		buttons[i].pressed.connect(func():
-			GameManager.play_button_click_sound() # Play general button click sound
+			GameManager.play_button_click_sound()
 			handle_answer(val)
 		)
 
@@ -78,21 +78,19 @@ func handle_answer(selected: int):
 
 	if selected == correct_answer:
 		correct_answers_given += 1
-		print("✅ Correct! Total correct answers: %d" % correct_answers_given)
-		GameManager.play_correct_sound() # Play correct answer sound
+		GameManager.play_correct_sound()
 		emit_signal("task_completed", 100, true)
 
 		if correct_answers_given >= 3:
 			task_finished = true
 			for btn in buttons:
 				btn.disabled = true
-			question_label.text = "🎉 Great job! Subtraction task complete!"
+			question_label.text = "Great job! Subtraction task complete!"
 			emit_signal("task_completed", 0, true)
 		else:
 			generate_question()
 	else:
-		print("❌ Incorrect. Selected %d, expected %d" % [selected, correct_answer])
-		GameManager.play_incorrect_sound() # Play incorrect answer sound
+		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
 
 		generate_question()

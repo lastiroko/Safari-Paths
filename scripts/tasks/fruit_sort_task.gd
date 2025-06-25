@@ -36,7 +36,7 @@ func initialize_grid_with_fruits():
 		instruction.text = "Great job! Fruit sorting task complete!"
 		for btn in grid.get_children():
 			btn.disabled = true
-			if btn is TextureButton: # Clear texture if it's a TextureButton
+			if btn is TextureButton:
 				btn.texture_normal = null
 			btn.text = ""
 		return
@@ -131,9 +131,9 @@ func reshuffle_unpicked_fruits():
 
 func update_buttons_display():
 	for i in range(grid.get_child_count()):
-		var btn := grid.get_child(i) as TextureButton # Cast to TextureButton
+		var btn := grid.get_child(i) as TextureButton
 
-		# Set minimum size as per your PDF
+		# Set minimum size
 		btn.custom_minimum_size = Vector2(128, 128)
 
 		for c in btn.get_signal_connection_list("pressed"):
@@ -141,24 +141,24 @@ func update_buttons_display():
 
 		if i < current_grid_fruits.size():
 			var fruit = current_grid_fruits[i]
-			btn.tooltip_text = fruit["name"] # shows fruit name on hover
+			btn.tooltip_text = fruit["name"]
 
 			# Load the texture
 			var tex_path = "res://assets/fruits/%s.png" % fruit["name"]
 			var texture = load(tex_path) if ResourceLoader.exists(tex_path) else null
-			btn.texture_normal = texture # Set the texture
+			btn.texture_normal = texture
 
 			if fruit.get("is_picked", false):
-				btn.disabled = true # Already picked good fruit
+				btn.disabled = true
 			else:
-				btn.disabled = false # Selectable fruit
+				btn.disabled = false
 				btn.pressed.connect(func():
-					GameManager.play_button_click_sound() # Re-enabled sound call
+					GameManager.play_button_click_sound()
 					handle_pick(fruit, btn, i)
 				)
 		else:
 			btn.tooltip_text = ""
-			btn.texture_normal = null # Clear texture if no fruit
+			btn.texture_normal = null
 			btn.disabled = true
 
 func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
@@ -170,24 +170,22 @@ func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 	if fruit["quality"] == "good":
 		current_grid_fruits[index_in_grid]["is_picked"] = true
 		picked_good_fruits_count += 1
-		print("✅ Correct fruit picked: %s. Total good fruits: %d" % [fruit["name"], picked_good_fruits_count])
-		GameManager.play_correct_sound() # Re-enabled sound call
+		GameManager.play_correct_sound()
 
 		emit_signal("task_completed", 100, true)
 
 		if picked_good_fruits_count >= 3:
 			task_finished = true
-			instruction.text = "Great job! Fruit sorting task complete!"
+			instruction.text = " "
 			for b in grid.get_children():
 				b.disabled = true
-				if b is TextureButton: # Clear textures for disabled buttons
+				if b is TextureButton:
 					b.texture_normal = null
 			emit_signal("task_completed", 0, true)
 		else:
 			update_buttons_display()
 	else:
-		print("❌ Incorrect fruit picked: %s" % fruit["name"])
-		GameManager.play_incorrect_sound() # Re-enabled sound call
+		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
 
 		if not task_finished:

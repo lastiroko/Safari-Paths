@@ -14,11 +14,6 @@ var task_points: Dictionary = {
 	#"lion_task2": 0
 }
 
-# --- AudioStreamPlayer Nodes for Centralized Sound Management ---
-# IMPORTANT: For a global script (Autoload), these AudioStreamPlayer nodes
-# MUST be added as children directly to the 'GameManager' singleton in Godot's
-# Project Settings -> Autoload tab. Then, assign the respective sound files
-# to their 'Stream' property in the Inspector.
 @onready var audio_button_click = $AudioButtonClick
 @onready var audio_correct_answer = $AudioCorrectAnswer
 @onready var audio_incorrect_answer = $AudioIncorrectAnswer
@@ -36,25 +31,21 @@ func award_points(amount: int, task_key: String = "") -> void:
 	print("💰 Added %d points. Total now: %d" % [amount, player_points])
 	if task_key != "" and task_points.has(task_key):
 		task_points[task_key] += amount
-		print("📌 Task '%s' points: %d" % [task_key, task_points[task_key]])
 
-# --- Function to Reset Game State ---
 func reset_game_state():
 	player_points = 0
-	current_animal = "monkey" # Always start from monkey level after reset
+	current_animal = "monkey"
 	current_task = 0
 
-	# Crucially, reset all task points to 0
 	task_points = {
 		"monkey_addition": 0,
 		"monkey_fruits": 0,
 		"elephant_task1": 0,
 		"elephant_task2": 0,
-		# Add any other task keys here if you expand the game
-	}
-	print("Game state reset.")
 
-# --- Sound Playback Functions ---
+	}
+
+
 func play_button_click_sound():
 	if audio_button_click and audio_button_click.stream != null:
 		audio_button_click.play()
