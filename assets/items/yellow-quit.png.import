@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://x3xjrxgxtbik"
-path="res://.godot/imported/Appleg.png-6722291bd558a7d4371c69fb7c28fce5.ctex"
+uid="uid://c6i2s2pic165f"
+path="res://.godot/imported/yellow-quit.png-488bafa63c227b7929c5bb88523836b2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/fruits/Appleg.png"
-dest_files=["res://.godot/imported/Appleg.png-6722291bd558a7d4371c69fb7c28fce5.ctex"]
+source_file="res://assets/items/yellow-quit.png"
+dest_files=["res://.godot/imported/yellow-quit.png-488bafa63c227b7929c5bb88523836b2.ctex"]
 
 [params]
 
