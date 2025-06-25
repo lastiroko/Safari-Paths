@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://ft8lj03ox7np"]
 
-[ext_resource type="Script" uid="uid://yn27sc6bcyai" path="res://scripts/levels/level_transition.gd" id="1_171vi"]
-[ext_resource type="Texture2D" uid="uid://dmpt4e12m8kkb" path="res://assets/backgrounds/monkeyDone.png" id="2_hu0dm"]
+[ext_resource type="Script" uid="uid://yn27sc6bcyai" path="res://scripts/levels/Level_Transition.gd" id="1_171vi"]
+[ext_resource type="Texture2D" uid="uid://clp40b5dplo1o" path="res://assets/backgrounds/level_transition.png" id="2_1f78k"]
 [ext_resource type="Texture2D" uid="uid://dh1j76ggt7ipn" path="res://assets/items/yellowContinuebutton.png" id="3_ftnph"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_171vi"]
