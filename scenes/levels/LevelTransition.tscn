@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://ft8lj03ox7np"]
 
 [ext_resource type="Script" uid="uid://yn27sc6bcyai" path="res://scripts/levels/Level_Transition.gd" id="1_171vi"]
-[ext_resource type="Texture2D" uid="uid://dmpt4e12m8kkb" path="res://assets/backgrounds/monkeyDone.png" id="2_hu0dm"]
+[ext_resource type="Texture2D" uid="uid://clp40b5dplo1o" path="res://assets/backgrounds/level_transition.png" id="2_1f78k"]
 [ext_resource type="Texture2D" uid="uid://dh1j76ggt7ipn" path="res://assets/items/yellowContinuebutton.png" id="3_ftnph"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_171vi"]
@@ -24,16 +24,25 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -511.065
-offset_top = -542.736
-offset_right = 512.935
-offset_bottom = 481.264
+offset_left = -517.113
+offset_top = -337.038
+offset_right = 510.887
+offset_bottom = 424.962
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(1.17787, 0.821608)
-texture = ExtResource("2_hu0dm")
+texture = ExtResource("2_1f78k")
 expand_mode = 3
 stretch_mode = 5
+
+[node name="WelldoneLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = -228.82
+offset_top = -334.14
+offset_right = 456.18
+offset_bottom = -255.14
+text = "Monkey Level Complete!"
+label_settings = SubResource("LabelSettings_171vi")
 
 [node name="ContinueButton" type="TextureButton" parent="."]
 custom_minimum_size = Vector2(100, 20)
@@ -45,15 +54,6 @@ offset_bottom = 1108.02
 scale = Vector2(0.334051, 0.253265)
 texture_normal = ExtResource("3_ftnph")
 script = ExtResource("1_171vi")
-
-[node name="WelldoneLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = -228.82
-offset_top = -334.14
-offset_right = 456.18
-offset_bottom = -255.14
-text = "Monkey Level Complete!"
-label_settings = SubResource("LabelSettings_171vi")
 
 [connection signal="mouse_entered" from="ContinueButton" to="." method="_on_continue_button_mouse_entered"]
 [connection signal="mouse_exited" from="ContinueButton" to="." method="_on_continue_button_mouse_exited"]

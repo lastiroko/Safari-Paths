@@ -14,11 +14,6 @@ var task_points: Dictionary = {
 	#"lion_task2": 0
 }
 
-# --- AudioStreamPlayer Nodes for Centralized Sound Management ---
-# IMPORTANT: For a global script (Autoload), these AudioStreamPlayer nodes
-# MUST be added as children directly to the 'GameManager' singleton in Godot's
-# Project Settings -> Autoload tab. Then, assign the respective sound files
-# to their 'Stream' property in the Inspector.
 @onready var audio_button_click = $AudioButtonClick
 @onready var audio_correct_answer = $AudioCorrectAnswer
 @onready var audio_incorrect_answer = $AudioIncorrectAnswer
