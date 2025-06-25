@@ -28,12 +28,15 @@ var task_finished := false
 
 func _ready():
 	randomize()
-	instruction.text = "🍎 Pick the ripe fruits!"
+	instruction.text = " Pick the ripe fruits!"
+	var settings := LabelSettings.new()
+	settings.font_size = 40
+	instruction.label_settings = settings
 	initialize_grid_with_fruits()
 
 func initialize_grid_with_fruits():
 	if task_finished:
-		instruction.text = "Great job! Fruit sorting task complete!"
+		#instruction.text = "Great job! Fruit sorting task complete!"
 		for btn in grid.get_children():
 			btn.disabled = true
 			if btn is TextureButton:
@@ -176,7 +179,7 @@ func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 
 		if picked_good_fruits_count >= 3:
 			task_finished = true
-			instruction.text = " "
+			#instruction.text = "Great job! Fruit sorting task complete!"
 			for b in grid.get_children():
 				b.disabled = true
 				if b is TextureButton:

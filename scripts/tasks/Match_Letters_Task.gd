@@ -31,6 +31,9 @@ var matches_made = 0
 func _ready():
 	randomize()
 	instruction_label.text = "🧩 Match the letter to the color!"
+	var settings := LabelSettings.new()
+	settings.font_size = 40
+	instruction_label.label_settings = settings
 	generate_ui()
 
 func _create_color_stylebox(color: Color, border_width: int = 0, border_color: Color = Color.BLACK) -> StyleBoxFlat:

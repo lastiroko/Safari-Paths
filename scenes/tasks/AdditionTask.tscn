@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://btvm7tatbqe07"]
 
-[ext_resource type="Script" uid="uid://b1efb0mg4a6d2" path="res://scripts/tasks/Addition_Task.gd" id="1_unrrd"]
+[ext_resource type="Script" uid="uid://b1efb0mg4a6d2" path="res://scripts/tasks/addition_task.gd" id="1_unrrd"]
 
 [node name="AdditionTask" type="Control"]
 layout_mode = 3
@@ -18,9 +18,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 380.0
-offset_right = 420.0
-offset_bottom = 45.0
+offset_left = 373.0
+offset_top = 41.0
+offset_right = 413.0
+offset_bottom = 86.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 32
 

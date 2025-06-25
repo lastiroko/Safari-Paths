@@ -13,6 +13,9 @@ var correct_answers_given := 0
 var task_finished := false
 
 func _ready():
+	var settings := LabelSettings.new()
+	settings.font_size = 60
+	question_label.label_settings = settings
 	randomize()
 	generate_question()
 
