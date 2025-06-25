@@ -23,7 +23,7 @@ var all_fruits := [
 ]
 
 var current_grid_fruits: Array[Dictionary] = []
-var picked_good_fruits_count := 0
+var picked_good_fruits: Array[String] = []  # Store names of picked good fruits
 var task_finished := false
 
 func _ready():
@@ -56,7 +56,6 @@ func initialize_grid_with_fruits():
 
 	for i in range(min(3, good_candidates.size())):
 		var fruit = good_candidates[i].duplicate()
-		fruit["is_picked"] = false
 		initial_fruits_temp.append(fruit)
 		good_fruits_added_to_initial_set += 1
 
@@ -66,11 +65,10 @@ func initialize_grid_with_fruits():
 
 	for i in range(min(remaining_slots, combined_remaining.size())):
 		var fruit = combined_remaining[i].duplicate()
-		fruit["is_picked"] = false
 		initial_fruits_temp.append(fruit)
 
 	while initial_fruits_temp.size() < 6:
-		initial_fruits_temp.append({ "name": "Placeholder", "quality": "bad", "is_picked": false })
+		initial_fruits_temp.append({ "name": "Placeholder", "quality": "bad" })
 
 	initial_fruits_temp.shuffle()
 	current_grid_fruits = initial_fruits_temp
@@ -80,23 +78,19 @@ func reshuffle_unpicked_fruits():
 	var new_selectable_fruits_for_slots: Array[Dictionary] = []
 	var available_fruits_pool = all_fruits.duplicate()
 
-	var names_of_currently_picked_good_fruits = []
-	for fruit_data in current_grid_fruits:
-		if fruit_data.get("is_picked", false):
-			names_of_currently_picked_good_fruits.append(fruit_data["name"])
-
+	# Filter out already picked good fruits
 	available_fruits_pool = available_fruits_pool.filter(func(f):
-		return not names_of_currently_picked_good_fruits.has(f["name"])
+		return not picked_good_fruits.has(f["name"])
 	)
 
 	var good_available = available_fruits_pool.filter(func(f): return f["quality"] == "good")
 	var bad_available = available_fruits_pool.filter(func(f): return f["quality"] == "bad")
 
-	var num_unpicked_slots = 6 - picked_good_fruits_count
-	var num_good_needed_for_completion = 3 - picked_good_fruits_count
+	var num_unpicked_slots = 6 - picked_good_fruits.size()
+	var num_good_needed_for_completion = 3 - picked_good_fruits.size()
 
 	var num_good_to_add_to_new_set = max(0, num_good_needed_for_completion)
-	if picked_good_fruits_count < 3:
+	if picked_good_fruits.size() < 3:
 		num_good_to_add_to_new_set = max(num_good_to_add_to_new_set, 2)
 
 	num_good_to_add_to_new_set = min(num_good_to_add_to_new_set, good_available.size())
@@ -104,7 +98,6 @@ func reshuffle_unpicked_fruits():
 	good_available.shuffle()
 	for i in range(num_good_to_add_to_new_set):
 		var fruit = good_available.pop_front().duplicate()
-		fruit["is_picked"] = false
 		new_selectable_fruits_for_slots.append(fruit)
 
 	var combined_remaining = good_available + bad_available
@@ -112,33 +105,40 @@ func reshuffle_unpicked_fruits():
 
 	while new_selectable_fruits_for_slots.size() < num_unpicked_slots and combined_remaining.size() > 0:
 		var fruit = combined_remaining.pop_front().duplicate()
-		fruit["is_picked"] = false
 		new_selectable_fruits_for_slots.append(fruit)
 
 	while new_selectable_fruits_for_slots.size() < num_unpicked_slots:
-		new_selectable_fruits_for_slots.append({ "name": "FillerBad", "quality": "bad", "is_picked": false })
+		new_selectable_fruits_for_slots.append({ "name": "FillerBad", "quality": "bad" })
 
 	new_selectable_fruits_for_slots.shuffle()
 
-	var new_selectable_index = 0
-	for i in range(6):
-		if not current_grid_fruits[i].get("is_picked", false):
-			if new_selectable_index < new_selectable_fruits_for_slots.size():
-				current_grid_fruits[i] = new_selectable_fruits_for_slots[new_selectable_index]
-				new_selectable_index += 1
-			else:
-				current_grid_fruits[i] = { "name": "N/A", "quality": "bad", "is_picked": false }
+	# Create new grid combining picked good fruits and new selectable fruits
+	var new_grid: Array[Dictionary] = []
 
+	# First, add all picked good fruits back to their positions
+	for picked_name in picked_good_fruits:
+		var picked_fruit = all_fruits.filter(func(f): return f["name"] == picked_name)[0].duplicate()
+		new_grid.append(picked_fruit)
+
+	# Then add the new selectable fruits
+	for fruit in new_selectable_fruits_for_slots:
+		new_grid.append(fruit)
+
+	# Shuffle only if we have less than 6 items, then pad to 6
+	while new_grid.size() < 6:
+		new_grid.append({ "name": "N/A", "quality": "bad" })
+
+	new_grid.shuffle()
+	current_grid_fruits = new_grid
 	update_buttons_display()
-
 
 func update_buttons_display():
 	for i in range(grid.get_child_count()):
 		var btn := grid.get_child(i) as TextureButton
 
-		# Set minimum size
 		btn.custom_minimum_size = Vector2(128, 128)
 
+		# Clear previous connections
 		for c in btn.get_signal_connection_list("pressed"):
 			btn.disconnect("pressed", c.callable)
 
@@ -146,15 +146,24 @@ func update_buttons_display():
 			var fruit = current_grid_fruits[i]
 			btn.tooltip_text = fruit["name"]
 
-			# Load the texture
 			var tex_path = "res://assets/fruits/%s.png" % fruit["name"]
 			var texture = load(tex_path) if ResourceLoader.exists(tex_path) else null
 			btn.texture_normal = texture
 
-			if fruit.get("is_picked", false):
+			# Check if this fruit has been picked (is in our picked_good_fruits array)
+			var is_picked = picked_good_fruits.has(fruit["name"])
+
+			if is_picked:
+				# Previously picked good fruit - show as disabled with grey tint
 				btn.disabled = true
+				btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
+				btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			else:
+				# Unpicked fruit - show as normal and clickable
 				btn.disabled = false
+				btn.modulate = Color.WHITE  # Reset to normal color
+				btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
 				btn.pressed.connect(func():
 					GameManager.play_button_click_sound()
 					handle_pick(fruit, btn, i)
@@ -163,21 +172,25 @@ func update_buttons_display():
 			btn.tooltip_text = ""
 			btn.texture_normal = null
 			btn.disabled = true
+			btn.modulate = Color.WHITE
 
 func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 	if task_finished:
 		return
 
-	btn.disabled = true
-
 	if fruit["quality"] == "good":
-		current_grid_fruits[index_in_grid]["is_picked"] = true
-		picked_good_fruits_count += 1
-		GameManager.play_correct_sound()
+		# Add to picked fruits list
+		picked_good_fruits.append(fruit["name"])
 
+		# Update button appearance immediately
+		btn.disabled = true
+		btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
+		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+		GameManager.play_correct_sound()
 		emit_signal("task_completed", 100, true)
 
-		if picked_good_fruits_count >= 3:
+		if picked_good_fruits.size() >= 3:
 			task_finished = true
 			#instruction.text = "Great job! Fruit sorting task complete!"
 			for b in grid.get_children():
@@ -186,8 +199,10 @@ func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 					b.texture_normal = null
 			emit_signal("task_completed", 0, true)
 		else:
-			update_buttons_display()
+			# Don't reshuffle immediately for good fruits
+			pass
 	else:
+		# Bad fruit clicked
 		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
 

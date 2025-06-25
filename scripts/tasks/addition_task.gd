@@ -26,45 +26,38 @@ func generate_question():
 	if task_finished:
 		return
 
-	var a: int
-	var b: int
+	var a = randi() % 5 + 1
+	var b = randi() % 5 + 1
+	correct_answer = a + b
 
-	while true:
-		a = randi() % 5 + 1
-		b = randi() % 5 + 1
+	question_label.text = "What is %d + %d?" % [a, b]
 
-		if a < b:
-			var temp = a
-			a = b
-			b = temp
-
-		correct_answer = a - b
-
-		if correct_answer >= 0:
-			break
-
-	question_label.text = "What is %d - %d?" % [a, b]
-
+	# Generate answer choices
 	var answers = [correct_answer]
+	var max_attempts = 20
+	var attempts = 0
 
-	while answers.size() < 3:
+	while answers.size() < 3 and attempts < max_attempts:
 		var fake_answer: int
-		var offset = randi() % 2 + 1
+		var offset = randi() % 3 + 1
 
 		if randf() < 0.5:
 			fake_answer = correct_answer + offset
 		else:
 			fake_answer = correct_answer - offset
 
-		if fake_answer >= 0 and fake_answer <= 5 and not answers.has(fake_answer):
+		if fake_answer >= 0 and fake_answer <= 15 and not answers.has(fake_answer):
 			answers.append(fake_answer)
 
+		attempts += 1
+
 	while answers.size() < 3:
-		var fallback_fake = randi() % 6
+		var fallback_fake = randi() % 16
 		if not answers.has(fallback_fake):
 			answers.append(fallback_fake)
 
 	answers.shuffle()
+
 
 	for i in range(3):
 		var val = answers[i]
@@ -91,7 +84,7 @@ func handle_answer(selected: int):
 			task_finished = true
 			for btn in buttons:
 				btn.disabled = true
-			question_label.text = "🎉 Great job! Subtraction task complete!"
+			question_label.text = "You are really good at Math!"
 		else:
 			generate_question()
 	else:
