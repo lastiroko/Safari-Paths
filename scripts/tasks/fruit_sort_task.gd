@@ -36,7 +36,6 @@ func _ready():
 
 func initialize_grid_with_fruits():
 	if task_finished:
-		#instruction.text = "Great job! Fruit sorting task complete!"
 		for btn in grid.get_children():
 			btn.disabled = true
 			if btn is TextureButton:
@@ -78,7 +77,6 @@ func reshuffle_unpicked_fruits():
 	var new_selectable_fruits_for_slots: Array[Dictionary] = []
 	var available_fruits_pool = all_fruits.duplicate()
 
-	# Filter out already picked good fruits
 	available_fruits_pool = available_fruits_pool.filter(func(f):
 		return not picked_good_fruits.has(f["name"])
 	)
@@ -112,19 +110,15 @@ func reshuffle_unpicked_fruits():
 
 	new_selectable_fruits_for_slots.shuffle()
 
-	# Create new grid combining picked good fruits and new selectable fruits
 	var new_grid: Array[Dictionary] = []
 
-	# First, add all picked good fruits back to their positions
 	for picked_name in picked_good_fruits:
 		var picked_fruit = all_fruits.filter(func(f): return f["name"] == picked_name)[0].duplicate()
 		new_grid.append(picked_fruit)
 
-	# Then add the new selectable fruits
 	for fruit in new_selectable_fruits_for_slots:
 		new_grid.append(fruit)
 
-	# Shuffle only if we have less than 6 items, then pad to 6
 	while new_grid.size() < 6:
 		new_grid.append({ "name": "N/A", "quality": "bad" })
 
@@ -138,7 +132,6 @@ func update_buttons_display():
 
 		btn.custom_minimum_size = Vector2(128, 128)
 
-		# Clear previous connections
 		for c in btn.get_signal_connection_list("pressed"):
 			btn.disconnect("pressed", c.callable)
 
@@ -150,18 +143,16 @@ func update_buttons_display():
 			var texture = load(tex_path) if ResourceLoader.exists(tex_path) else null
 			btn.texture_normal = texture
 
-			# Check if this fruit has been picked (is in our picked_good_fruits array)
 			var is_picked = picked_good_fruits.has(fruit["name"])
 
 			if is_picked:
-				# Previously picked good fruit - show as disabled with grey tint
 				btn.disabled = true
 				btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
 				btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			else:
-				# Unpicked fruit - show as normal and clickable
+
 				btn.disabled = false
-				btn.modulate = Color.WHITE  # Reset to normal color
+				btn.modulate = Color.WHITE
 				btn.mouse_filter = Control.MOUSE_FILTER_PASS
 
 				btn.pressed.connect(func():
@@ -174,15 +165,13 @@ func update_buttons_display():
 			btn.disabled = true
 			btn.modulate = Color.WHITE
 
-func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
+func handle_pick(fruit: Dictionary, btn: TextureButton, _index_in_grid: int):
 	if task_finished:
 		return
 
 	if fruit["quality"] == "good":
-		# Add to picked fruits list
 		picked_good_fruits.append(fruit["name"])
 
-		# Update button appearance immediately
 		btn.disabled = true
 		btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
 		btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -192,17 +181,14 @@ func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 
 		if picked_good_fruits.size() >= 3:
 			task_finished = true
-			#instruction.text = "Great job! Fruit sorting task complete!"
 			for b in grid.get_children():
 				b.disabled = true
 				if b is TextureButton:
 					b.texture_normal = null
 			emit_signal("task_completed", 0, true)
 		else:
-			# Don't reshuffle immediately for good fruits
 			pass
 	else:
-		# Bad fruit clicked
 		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
 

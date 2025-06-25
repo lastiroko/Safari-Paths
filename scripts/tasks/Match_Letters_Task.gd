@@ -30,7 +30,7 @@ var matches_made = 0
 
 func _ready():
 	randomize()
-	instruction_label.text = "🧩 Match the letter to the color!"
+	instruction_label.text = "Match the letter to the color!"
 	var settings := LabelSettings.new()
 	settings.font_size = 40
 	instruction_label.label_settings = settings
@@ -171,7 +171,7 @@ func check_match():
 
 		if matches_made >= 5:
 			task_finished = true
-			instruction_label.text = "🎉 Great job! You matched all!"
+			instruction_label.text = "Great job! You matched all the colors!"
 			emit_signal("task_completed", 0, true)
 	else:
 

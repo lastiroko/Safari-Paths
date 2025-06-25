@@ -1,13 +1,13 @@
 [gd_scene load_steps=2 format=3 uid="uid://btvm7tatbqe07"]
 
-[ext_resource type="Script" uid="uid://b1efb0mg4a6d2" path="res://scripts/tasks/addition_task.gd" id="1_unrrd"]
+[ext_resource type="Script" uid="uid://b1efb0mg4a6d2" path="res://scripts/tasks/Addition_Task.gd" id="1_unrrd"]
 
 [node name="AdditionTask" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_unrrd")
 
-[node name="DebugBG" type="ColorRect" parent="."]
+[node name="Background`" type="ColorRect" parent="."]
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 647.0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://cxhabd7hv2kic"]
 
-[ext_resource type="Script" uid="uid://3cel2sp1gvrk" path="res://scripts/levels/end_scene.gd" id="1_2eobd"]
+[ext_resource type="Script" uid="uid://3cel2sp1gvrk" path="res://scripts/levels/End_Scene.gd" id="1_2eobd"]
 [ext_resource type="Texture2D" uid="uid://cofofywu5s1tb" path="res://assets/backgrounds/closing-pic.jpg" id="2_fxaxk"]
 [ext_resource type="Texture2D" uid="uid://df02xsbwdjckd" path="res://assets/items/yellow-restart.png" id="3_fxaxk"]
 [ext_resource type="Texture2D" uid="uid://c6i2s2pic165f" path="res://assets/items/yellow-quit.png" id="4_fxaxk"]
@@ -41,6 +41,7 @@ offset_top = 318.0
 offset_right = 1641.0
 offset_bottom = 1342.0
 scale = Vector2(0.363846, 0.394909)
+tooltip_text = "Restart"
 texture_normal = ExtResource("3_fxaxk")
 
 [node name="QuitButton" type="TextureButton" parent="."]
@@ -60,7 +61,7 @@ offset_top = 25.0
 offset_right = 993.0
 offset_bottom = 84.0
 scale = Vector2(1.29888, 1.75448)
-text = "Congratulations  you have finished the game!!"
+text = "Congratulations  you have finished the game!"
 label_settings = SubResource("LabelSettings_6ah21")
 
 [connection signal="pressed" from="RestartButton" to="." method="_on_Restart_pressed"]
