@@ -78,7 +78,6 @@ func handle_answer(selected: int):
 
 	if selected == correct_answer:
 		correct_answers_given += 1
-		print("✅ Correct! Total correct answers: %d" % correct_answers_given)
 		GameManager.play_correct_sound()
 		emit_signal("task_completed", 100, true)
 
@@ -90,7 +89,6 @@ func handle_answer(selected: int):
 		else:
 			generate_question()
 	else:
-		print("❌ Incorrect. Selected %d, expected %d" % [selected, correct_answer])
 		GameManager.play_incorrect_sound()
 		emit_signal("task_completed", 0, false)
 		generate_question()

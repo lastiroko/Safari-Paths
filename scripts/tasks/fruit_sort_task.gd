@@ -170,7 +170,6 @@ func handle_pick(fruit: Dictionary, btn: TextureButton, index_in_grid: int):
 	if fruit["quality"] == "good":
 		current_grid_fruits[index_in_grid]["is_picked"] = true
 		picked_good_fruits_count += 1
-		print("✅ Correct fruit picked: %s. Total good fruits: %d" % [fruit["name"], picked_good_fruits_count])
 		GameManager.play_correct_sound()
 
 		emit_signal("task_completed", 100, true)
