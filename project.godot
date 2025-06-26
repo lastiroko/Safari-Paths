@@ -26,6 +26,10 @@ window/size/viewport_height=650
 window/size/initial_position=Vector2i(1200, 750)
 window/size/resizable=false
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
